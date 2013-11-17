@@ -1,0 +1,110 @@
+{namespace kassy.views.movie autoescape="false"}
+
+/**
+ * @param types
+ */
+{template .Types}
+    <section class="interests">
+        <h2>Что вам интересно?</h2>
+        <ul>
+            <li>
+                <div class="link" href="#movie/recommend">
+                    <span class="i4"><i class="s_i"></i>Рекомендуем</span>
+                    <i class="s_i"></i>
+                </div>
+            </li>
+            {foreach $type in $types}
+                <li>
+                    <div class="link" href="#movie/list/{$type.id}">
+                        <span class="i{$type.icon}"><i class="s_i"></i>{$type.name}</span>
+                        <i class="s_i"></i>
+                    </div>
+                </li>
+            {/foreach}
+        </ul>
+    </section>
+{/template}
+
+/**
+ * @param days
+ * @param showType
+ * @param buildingType
+ */
+{template .List}
+    {if false and $showType and $buildingType}
+        <section class="change_buttons cf">
+            <span class="link moves s_i active">{$showType.name}</span>
+            <a class="link places s_i" href="#place/list/{$buildingType.id}">{$buildingType.name}</a>
+        </section>
+    {/if}
+    {foreach $day in $days}
+        <div class="today_date">
+            <p>{$day.date}</p>
+        </div>
+        <section class="movies_list">
+            {foreach $event in $day.events}
+                <div class="link movie_item" href="#movie/places/{$event.show.id}">
+                    <h3>{$event.show.name}</h3>
+                    <p>{$event.show.ageRestriction}</p>
+                    <div class="rating s_i {$event.show.ratingEn}"></div>
+                    {if $event.isRecommend}
+                        <div class="awesome s_i"></div>
+                    {/if}
+                </div>
+            {/foreach}
+        </section>
+    {ifempty}
+        <div style="color:#787878; text-align:center;">Пусто</div>
+    {/foreach}
+{/template}
+
+/**
+ * @param show
+ * @param days
+ */
+{template .Times}
+    <section class="show_one">
+        <div class="info cf">
+            {if $show.image}
+                <aside>
+                    <img src="{$show.image}"/>
+                </aside>
+            {/if}
+            <section {if not $show.image}class="wide"{/if}>
+                <span class="block genre">{$show.ageRestriction}</span>
+                <h2 class="overflow-ellipsis">{$show.name}</h2>
+                <p class="about">
+                    {if $show.durationHHMM}
+                        <span class="block">
+                            <time><!--i class="s_i"></i-->Продолжительность: {$show.durationHHMM}</time>
+                        </span>
+                    {/if}
+                    {if $show.price > 0}
+                        <span class="block">Цена билета: {$show.price} руб.</span>
+                    {/if}
+                </p>
+            </section>
+        </div>
+        {if $show.description}
+        <div class="about">
+            <div class="preview">{$show.description}</div>
+        </div>
+        {/if}
+    </section>
+    {foreach $day in $days}
+        <div class="today_date_one">
+            <p>{$day.date}</p>
+        </div>
+        {foreach $event in $day.events}
+            <div class="link show_times" href="#order/details/{$show.id}/{$event.building.id}/{$day.dateRaw}">
+                <h3>{$event.building.name}</h3>
+                <ul class="cf">
+                    {foreach $time in $event.times}
+                        <li>{$time}</li>
+                    {/foreach}
+                </ul>
+                <i class="s_i"></i>
+            </div>
+        {/foreach}
+    {/foreach}
+{/template}

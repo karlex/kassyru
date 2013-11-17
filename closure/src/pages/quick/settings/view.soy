@@ -1,0 +1,50 @@
+{namespace kassy.views.settings autoescape="false"}
+
+/**
+ * @param cityName
+ * @param useGPS
+ * @param usePush
+ * @param region
+ */
+{template .Main}
+    <section class="cities">
+        <h2>Мой город</h2>
+        <div class="link change" href="#settings/region">
+            <span class="city">{$cityName}</span>
+            <span class="more">Изменить</span>
+        </div>
+    </section>
+    <section class="settings">
+        <div class="setting">
+            <span class="title">Разрешить GPS-определение</span>
+            <i id="btn-gps" class="s_i switch {if $useGPS}on{/if}"></i>
+        </div>
+        <div class="setting">
+            <span class="title">Разрешить Push-уведомления</span>
+            <i id="btn-push" class="s_i switch {if $usePush}on{/if}"></i>
+        </div>
+    </section>
+
+    <div class="big_button">
+        <div class="link green s_i" href="#login">Login / Войти</div>
+    </div>
+
+    <div style="text-align: center; line-height: 2em; padding-bottom: 1em;">
+        <a class="link" target="_blank" href="http://{$region}.kassy.ru/page/o-kompanii/">О компании</a>
+        <br>
+        <a class="link" target="_blank" href="http://{$region}.kassy.ru/page/pravila-prodazhi-biletov/">Правила продаж</a>
+    </div>
+{/template}
+
+/**
+ * @param regions
+ */
+{template .Region}
+    <section class="interests">
+        <ul>
+            {foreach $region in $regions}
+                <li><div class="link item-region" data-region-id="{$region.db}">{$region.name}</div></li>
+            {/foreach}
+        </ul>
+    </section>
+{/template}

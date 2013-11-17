@@ -1,0 +1,166 @@
+{namespace kassy.views.order autoescape="false"}
+
+/**
+ * @param show
+ * @param posterUrl
+ * @param date
+ * @param dateRaw
+ * @param building
+ * @param events
+ * @param full
+ */
+{template .Details}
+    <section class="movie_detail">
+        <div class="info cf">
+            {if $posterUrl}
+                <aside>
+                    <img class="poster" src="{$posterUrl}">
+                </aside>
+            {/if}
+            <section {if not $posterUrl}class="wide"{/if}>
+                <span class="block genre">{$show.ageRestriction}</span>
+                <h2 class="overflow-ellipsis">{$show.name}</h2>
+                <p class="about">
+                    {if $show.durationHHMM}
+                        <span class="block">
+                            <time><!--i class="s_i"></i-->Продолжительность: {$show.durationHHMM}</time>
+                        </span>
+                    {/if}
+                    {if $show.price > 0}
+                        <span class="block">Цена билета: {$show.price} руб.</span>
+                    {/if}
+                </p>
+            </section>
+        </div>
+        {if $show.description}
+            <div class="about">
+                <div class="preview padding">{$show.description}</div>
+            </div>
+        {/if}
+    </section>
+    {if not $full}
+        <div class="today_date_one">
+            <p>{$date}</p>
+        </div>
+        <section class="show_times">
+            <h3>{$building.name}</h3>
+
+            <ul class="cf">
+                {foreach $event in $events}
+
+                    {if isFirst($event)}
+                        <li>{$event.hall.name}:</li>
+                    {elseif ($event.hallId != $events[index($event) - 1].hallId)}
+                        </ul><ul class="cf">
+                        <li>{$event.hall.name}:</li>
+                    {/if}
+
+                    <li>{$event.timeHHMM}</li>
+                {/foreach}
+            </ul>
+
+            <p class="all_dates">
+                <div class="link" href="javascript:history.go(-1)">Другие сеансы<i class="s_i"></i></div>
+            </p>
+        </section>
+    {/if}
+    <div class="i_go">
+        <div class="checkbox">
+            <i class="s_i"></i>
+            <p>Я пойду</p>
+        </div>
+    </div>
+    <div class="big_button">
+        <div class="link green s_i" href="#order/seat/{$show.id}/{$building.id}/{$dateRaw}">Заказать билеты</div>
+    </div>
+{/template}
+
+/**
+ * @param events
+ */
+{template .Seat}
+    <section class="times cf">
+        <div class="btn_group cf">
+            <h2>Сеанс:</h2>
+            {foreach $event in $events}
+                <button class="btn-time {if isFirst($event)}active {/if}s_i" data-event-id="{$event.id}">{$event.timeHHMM}</button>
+            {/foreach}
+        </div>
+        <button class="del"><i class="s_i"></i></button>
+    </section>
+    <section class="seat">
+        <h3>Нажмите на сектор, чтобы выбрать места</h3>
+    </section>
+    <div class="seat-holder">
+        <canvas class="hall-canvas"></canvas>
+    </div>
+    <div class="big_button" style="position:absolute; bottom:0; width:100%;">
+        <div id="btn-confirm" class="link green s_i" href="#order/confirm">Я выбрал места</div>
+    </div>
+{/template}
+
+/**
+ * @param event
+ * @param show
+ * @param building
+ * @param places
+ * @param total
+ */
+{template .Confirm}
+    <section class="confirm">
+        <h2>Проверьте Ваши данные заказа</h2>
+        <time class="cf">
+            <span class="date"><i class="s_i"></i>{$event.dateDDMMMM}</span>
+            <span class="time"><i class="s_i"></i>{$event.timeHHMM}</span>
+        </time>
+        <h3>{$show.name}</h3>
+        <p class="about_show">{$show.ageRestriction}</p>
+        <p class="about_place">{$building.name}</p>
+    </section>
+    <section class="tickets">
+        <div class="prices">
+            <ul>
+                {foreach $place in $places}
+                    <li class="s_i">
+                        <span class="text">{$place.section.name}, Ряд {$place.row}, Место {$place.num}</span>
+                        <span class="price">{$place.price} руб.</span>
+                        <button class="del"><i class="s_i"></i></button>
+                    </li>
+                {/foreach}
+            </ul>
+            <p>Итого: <strong><span>{$total}</span> руб.</strong></p>
+        </div>
+    </section>
+    <div class="big_button">
+        <div class="confirm-order-btn link green s_i">Подтвердить заказ</div>
+        <div class="link red s_i" href="javascript:history.go(-1)">Выбрать другие места</div>
+    </div>
+{/template}
+
+/**
+ * @param number
+ * @param total
+ */
+{template .Final}
+    <section class="confirm_final">
+        <h2>Заказ №{$number} на сумму {$total} рублей сформирован.</h2>
+        <div class="terms">
+            <!-- Что бы отображать галочку поставте класс checked для checkbox -->
+            <div class="checkbox">
+                <i class="s_i"></i>
+                <p>Я прочитал правила продажи</p>
+            </div>
+            <div class="link call" href="">Читать<i class="s_i"></i></div>
+        </div>
+        <h3>Варианты бронирования:</h3>
+        <div class="button">
+            <div class="link s_i" href="">Заявка</div>
+            <p>Выбранные Вами места бронируются только после подтверждения Вашего заказа при последующем звонке оператора call-центра.</p>
+        </div>
+        <!-- Что бы отоюражать этот блок уберите класс hidden -->
+        <div class="button hidden btn-card-buy">
+            <div class="link s_i" href="">Покупка по карте</div>
+            <p>Выбранные Вами места бронируются, если&nbsp;Вы оплачиваете заказ картой Visa или Mastercard и&nbsp;распечатываете электронный билет. Электронный билет обменивается на&nbsp;входной не&nbsp;ранее чем за&nbsp;час до&nbsp;начала мероприятия в&nbsp;кассе площадки проведения при предъявлении паспорта.</p>
+        </div>
+    </section>
+{/template}

@@ -1,0 +1,22 @@
+{namespace kassy.views.myorders autoescape="false"}
+
+/**
+ * @param orders
+ */
+{template .List}
+    <section class="my_orders">
+        {foreach $order in $orders}
+            <article class="order list-item_removable">
+                <time>{$order.time}</time>
+                <h3 class="overflow-ellipsis">{$order.show.name}</h3>
+                <div class="about">{$order.show.description}</div>
+                <p class="place">{$order.building.name}</p>
+                <p class="price">{$order.ticket.count}, <strong>{$order.ticket.total} руб.</strong></p>
+                <!--a class="s_i" href="templates/my_order/#">Изменить</a-->
+                <!--button class="delete-btn" data-id="{$order.id}">Удалить</button-->
+            </article>
+        {ifempty}
+            <div style="color:#787878; text-align:center;">Пусто</div>
+        {/foreach}
+    </section>
+{/template}

@@ -1,0 +1,37 @@
+{namespace kassy.views.ticketoffice autoescape="false"}
+
+/**
+ * @param buildings
+ */
+{template .List}
+    <section class="change_buttons cf">
+        <div class="link moves s_i active hl_off" href="#ticketoffice">Список</div>
+        <div class="link places s_i hl_off" href="#place/map{foreach $building in $buildings}/{$building.id}{/foreach}">На карте</div>
+    </section>
+    <section class="addresses">
+        {foreach $building in $buildings}
+            <div class="link addresses-item" href="#place/map/{$building.id}">
+                <h2 class="overflow-ellipsis">{$building.name}</h2>
+                <address>
+                    {if $building.workhours.length > 0}<div>{$building.workhours}</div>{/if}
+                    {if $building.phones.length > 0}<div>{$building.phones.0}</div>{/if}
+                    {if $building.card == 1}<div style="width: 70px; height: 20px; background: url(./img/paycard.png) no-repeat;"></div>{/if}
+                </address>
+                <p id="bld-dist-{$building.id}"></p>
+            </div>
+        {/foreach}
+    </section>
+{/template}
+
+/**
+ *
+ */
+{template .Map}
+    <section class="change_buttons cf">
+        <div class="link moves s_i" href="#ticket_office/list">Список</div>
+        <div class="link places s_i active" href="#ticket_office/map">На карте</div>
+    </section>
+    <section id="map">
+        <!-- Сюда вставьте карту -->
+    </section>
+{/template}

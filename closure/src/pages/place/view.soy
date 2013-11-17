@@ -1,0 +1,95 @@
+{namespace kassy.views.place autoescape="false"}
+
+/**
+ * @param types
+ */
+{template .Types}
+    <section class="interests">
+        <h2>Что вам интересно?</h2>
+        <ul>
+            {foreach $type in $types}
+                <li>
+                    <div class="link" href="#place/list/{$type.id}">
+                        <span class="i{$type.icon}"><i class="s_i"></i>{$type.name}</span>
+                        <i class="s_i"></i>
+                    </div>
+                </li>
+            {/foreach}
+        </ul>
+    </section>
+{/template}
+
+/**
+ * @param places
+ * @param showType
+ * @param buildingType
+ */
+{template .List}
+    {if false and $showType and $buildingType}
+        <section class="change_buttons cf">
+            <a class="link moves s_i" href="#movie/list/{$showType.id}">{$showType.name}</a>
+            <span class="link places s_i active">{$buildingType.name}</span>
+        </section>
+    {/if}
+    <section class="movies_list">
+        {foreach $place in $places}
+            <div class="link movie_item" href="#place/movies/{$place.id}">
+                <h3 class="overflow-ellipsis">{$place.name}</h3>
+                <p>
+                    <span class="address">{$place.address}</span>
+                    {if $place.phones.length > 0}<br><span class="num">{$place.phones.0}</span>{/if}
+                </p>
+            </div>
+        {ifempty}
+            <div style="color:#787878; text-align:center;">Пусто</div>
+        {/foreach}
+    </section>
+{/template}
+
+/**
+ * @param place
+ * @param days
+ */
+{template .Movies}
+    <section class="place">
+        <h2 class="overflow-ellipsis">{$place.name}</h2>
+
+        <address>
+            <span>{$place.address}</span>
+            {if $place._lat and $place._lng}
+                <div class="link on_map" href="#place/map/{$place.id}">На карте<i class="s_i"></i></div>
+            {/if}
+        </address>
+
+        <p class="about">{$place.description |noAutoescape}</p>
+
+        {if $place.phones.length > 0}
+            <div class="link tel" href="tel:{$place.phones.0}">
+                <i class="s_i"></i>
+                <span class="num">{$place.phones.0}</span>
+                <span class="call">Позвонить</span>
+            </div>
+        {/if}
+        <p class="text"></p>
+    </section>
+    {foreach $day in $days}
+        <div class="today_date_one">
+            <p>{$day.date}</p>
+        </div>
+        <section class="place_detail">
+        {foreach $event in $day.events}
+            <div class="link" href="#order/details/{$event.show.id}/{$place.id}/{$day.dateRaw}">
+                <span class="i{$event.show.type.icon}">
+                    <i class="s_i"></i>{$event.show.name}
+                </span>
+                <ul class="cf">
+                    {foreach $time in $event.times}
+                        <li>{$time}</li>
+                    {/foreach}
+                </ul>
+                <i class="s_i"></i>
+            </div>
+        {/foreach}
+        </section>
+    {/foreach}
+{/template}

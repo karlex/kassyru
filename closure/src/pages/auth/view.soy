@@ -1,0 +1,54 @@
+{namespace kassy.views.auth autoescape="false"}
+
+/**
+ */
+{template .Login}
+    <section class="auth">
+        <div class="item">
+            <label for="email" class="label">Email</label>
+            <input id="email" class="email_input" type="text" tabindex="0">
+        </div>
+        <div class="item">
+            <label for="password" class="label">Пароль</label>
+            <input id="password" class="password_input" type="password" tabindex="1">
+        </div>
+    </section>
+
+    <div class="big_button">
+        <div class="link green s_i login-btn" tabindex="2">Войти</div>
+    </div>
+
+    <center><a href="#registration">Регистрация</a></center>
+{/template}
+
+/**
+ */
+{template .Registration}
+    <section class="auth">
+        <div class="item">
+            <label for="firstname" class="label">Имя</label>
+            <input id="firstname" class="variant_input" type="text" tabindex="0" data-comment="Введите имя">
+        </div>
+        <div class="item">
+            <label for="lastname" class="label">Фамилия</label>
+            <input id="lastname" class="variant_input" type="text" tabindex="1" data-comment="Введите фамилию">
+        </div>
+        <div class="item">
+            <label for="email" class="label">Email</label>
+            <input id="email" class="email_input" type="email" tabindex="2" data-comment="Введите email">
+        </div>
+        <div class="item">
+            <label for="password" class="label">Пароль</label>
+            <input id="password" class="password_input" type="password" tabindex="3" data-comment="Введите пароль">
+        </div>
+        <div class="item">
+            <label for="password2" class="label">Подтверждение пароля</label>
+            <input id="password2" class="password_input" type="password" tabindex="4" data-comment="Введите пароль еще раз для подтверждения">
+        </div>
+    </section>
+    <center id="auth_comment" class="auth_comment"></center>
+    <center id="auth_alert" class="auth_alert"></center>
+    <div class="big_button">
+        <div class="link green s_i registration-btn" tabindex="5">Зарегистрироваться</div>
+    </div>
+{/template}

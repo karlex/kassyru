@@ -1,0 +1,37 @@
+* {
+    margin: 0; padding: 0;
+    -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+}
+
+body {
+    -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
+    -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
+    -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+    font-family: 'HelveticaNeue-Light', 'HelveticaNeue', Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* Portrait layout (default) */
+.app { height: 100%; }
+.app, .app-head, .app-body, .app-foot { position: absolute; width: 100%; overflow: hidden; }
+.app-head, .app-foot { height: 40px; }
+.app-head {
+    top: 0;
+    background-color: lightblue;
+}
+.app-body {
+    top: 40px;
+    bottom: 40px;
+}
+.app-foot {
+    bottom: 0;
+    background-color: lightgray;
+}
+
+/* Landscape layout (with min-width) */
+@media screen and (min-aspect-ratio: 1/1) and (min-width:400px) {
+
+}

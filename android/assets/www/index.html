@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html class="js flexbox canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths" style=""><!--<![endif]-->
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Kassy.ru</title>
+        <meta name="description" content="">
+        <meta charset="utf-8">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" href="./css/normalize.min.css">
+        <link rel="stylesheet" href="./css/main.css">
+    </head>
+    <body <!--onload="onDeviceReady()"-->>
+        <div id="header">
+            <div class="header-container">
+                <div class="lt-header-filler"></div>
+                <div class="rt-header-filler"></div>
+                <header>
+                    <h1 id="content-title" class="overflow-ellipsis"></h1>
+                    <div id="nav-btn-back" class="link back s_i" href="javascript:history.go(-1)">Назад</div>
+                    <div id="title-logo" class="logo kassy s_i"></div>
+                </header>
+            </div>
+        </div>
+        <div id="container">
+            <div class="main-container" id="content"></div>
+
+            <div id="loading" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: #fff; color: #000; z-index: 9999;">
+                <table style="width: 100%; height: 100%; text-align: center;">
+                    <tr>
+                        <td>Загрузка...</td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+        <div id="footer">
+            <div class="footer-container">
+                <footer>
+                    <nav>
+                        <ul class="cf">
+                            <li>
+                                <div class="link active" href="#">
+                                    <i class="main s_i"></i>
+                                    <span>Главная</span>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="link" href="#i_go">
+                                    <i class="go s_i"></i>
+                                    <span>Я пойду!</span>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="link" href="#ticketoffice">
+                                    <i class="casses s_i"></i>
+                                    <span>Кассы</span>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="link" href="#myorders">
+                                    <i class="orders s_i"></i>
+                                    <span>Заказы</span>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="link" href="#settings">
+                                    <i class="more s_i"></i>
+                                    <span>Еще</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </nav>
+                </footer>
+            </div>
+        </div>
+
+        <!-- Elements needed for the script to track browser history/locations -->
+        <form><input id="history_input" type="hidden" /></form>
+        <iframe id="history_frame" width="0px" height="0px" frameborder="0" src="blank.html"></iframe>
+
+        <script type="text/javascript" src="./js/slice.js"></script>
+        <script type="text/javascript" src="./js/bind.js"></script>
+
+        <script type="text/javascript" src="./js/cordova-2.2.0.js"></script>
+        <script type="text/javascript" src="./js/statusbarnotification.js"></script>
+        <script type="text/javascript" src="./js/LocalNotification.js"></script>
+        <script type="text/javascript" src="./js/softkeyboard.js"></script>
+        <script type="text/javascript" src="./js/iscroll.js"></script>
+        <script type="text/javascript" src="./js/main.js"></script>
+        <script type="text/javascript">
+            window.offlineAlertOpened = false;
+            window['offlineAlert'] = function() {
+                if (window.offlineAlertOpened) {
+                    return;
+                }
+
+                navigator.notification.alert(
+                    'Не удалось установить соединение.\nПроверьте соединение с интернетом и попробуйте снова.',  // message
+                    function(){ window.offlineAlertOpened = true; },         // callback
+                    'Ошибка соединения',            // title
+                    'OK'                  // buttonName
+                );
+            };
+
+            var onDeviceReady = function() {
+                window.console.log('Device is ready');
+
+                /*window.plugins.localNotification.add({
+                    date: new Date(Date.now() + 10*1000), // your set date object
+                    message: 'Hello world!',
+                    badge: 1,
+                    foreground:'foreground',
+                    background:'background',
+                    sound:'sub.caf'
+                });*/
+
+                // На этом этапе девайс инициализирован и доступ в интернет уже есть,
+                // так что можно грузить внешние скрипты
+                var script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = 'http://api-maps.yandex.ru/2.0-stable/?load=package.full&lang=ru-RU';
+
+                // После того, как скрипт загрузится, запускаем приложение
+                script.onload = function() {
+                    kassy.run();
+                };
+                script.onerror = window.offlineAlert;
+
+                // Запускаем загрузку скрипта
+                document.body.appendChild(script);
+            };
+
+            if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/)) {
+                document.addEventListener("deviceready", onDeviceReady, false);
+            } else {
+                onDeviceReady(); //this is the browser
+            }
+        </script>
+    </body>
+</html>

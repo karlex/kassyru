@@ -1,0 +1,29 @@
+{namespace kassy.views.igo autoescape="false"}
+
+/**
+ * @param days
+ */
+{template .List}
+    {foreach $day in $days}
+        <div class="today_date">
+            <p>{$day.date}</p>
+        </div>
+        <section class="movies_list">
+            {foreach $event in $day.events}
+                <div class="link movie_item list-item_removable" href="#order/details/{$event.show.id}/{$event.building.id}/{$day.rawDate}" data-show-id="{$event.show.id}" data-building-id="{$event.building.id}" data-date="{$day.rawDate}">
+                    <h3 class="overflow-ellipsis">{$event.show.name}</h3>
+                    {if $event.order}
+                        <p>Заказ №{$event.order.orderId}</p>
+                    {/if}
+                    <p>{$event.show.ageRestriction}&nbsp;</p>
+                    <div class="rating s_i {$event.show.ratingEn}"></div>
+                    {if $event.show.awesome}
+                        <div class="awesome s_i"></div>
+                    {/if}
+                </div>
+            {/foreach}
+        </section>
+    {ifempty}
+        <div style="color:#787878; text-align:center;">Пусто</div>
+    {/foreach}
+{/template}

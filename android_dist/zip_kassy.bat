@@ -1,0 +1,1 @@
+C:\dev\adt-bundle-windows\sdk\tools\zipalign -f -v 4 kassy_in.apk kassy.apk
