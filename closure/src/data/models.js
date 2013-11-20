@@ -39,10 +39,11 @@ kassy.data.BuildingTypeModel = function(values) {
     this.name = values['name'];
     this.kind = ~~values['kind'];
 
-    this.state = ~~values['_state'];
+    this.state = ~~values['state'];
 
-    this.order = ~~values['_order'];
-    this.other = ~~values['_other'];
+    this.order = ~~values['order'];
+
+    this.other = ~~values['other'];
 
     var icon = values['icon'];
     if (goog.isDef(icon)) {
@@ -66,10 +67,10 @@ kassy.data.BuildingModel = function(values) {
     this.name = goog.string.unescapeEntities(values['name'].replace(/\\/g, ''));
     this.description = goog.string.unescapeEntities(kassy.utils.replaceUrlWithLinks(values['descr'] + ''));
     this.address = values['address'];
-    this._lat = values['_lat'];
-    this._lng = values['_lng'];
+    this._lat = values['geo_lat'];
+    this._lng = values['geo_lng'];
     this.workhours = values['workhrs'];
-    this.card = ~~values['card'];
+    this.card = ~~values['is_pos'];
 
     if (goog.string.trim(values['phone']).length > 0) {
         this.phones = goog.array.map(values['phone'].split(','), function(phone) { return '+7 ' + goog.string.trim(phone); });
@@ -95,7 +96,7 @@ kassy.data.HallModel = function(values) {
     this.width = ~~values['width'];
     this.height = ~~values['height'];
     this.hidden = ~~values['hidden'];
-    this.state = ~~values['_state'];
+    this.state = ~~values['state'];
 };
 goog.inherits(kassy.data.HallModel, kassy.data.Model);
 
@@ -113,7 +114,7 @@ kassy.data.SectionModel = function(values) {
     this.name = values['name'];
     this.width = ~~values['width'];
     this.height = ~~values['height'];
-    this.state = ~~values['_state'];
+    this.state = ~~values['state'];
 };
 goog.inherits(kassy.data.SectionModel, kassy.data.Model);
 
@@ -131,7 +132,7 @@ kassy.data.PlaceModel = function(values) {
     this.y = ~~values['y'];
     this.row = ~~values['title'];
     this.num = ~~values['name'];
-    this.state = ~~values['_state'];
+    this.state = ~~values['state'];
 };
 goog.inherits(kassy.data.PlaceModel, kassy.data.Model);
 
@@ -148,7 +149,7 @@ kassy.data.EventModel = function(values) {
     this.showId = ~~values['show_id'];
     this.hallId = ~~values['hall_id'];
     this.dateTime = ~~values['date'];
-    this.state = ~~values['_state'];
+    this.state = ~~values['state'];
     this.isPremier = ~~values['is_prm'];
     this.isRecommend = ~~values['is_recommend'];
 
@@ -200,8 +201,8 @@ kassy.data.ShowModel = function(values) {
     this.ageRestriction = values['age_restriction'];
     this.rating = ~~values['rating'];
     this.duration = ~~values['duration']; // сек.
-    this.announce = ~~values['_announce'];
-    this.description = goog.string.unescapeEntities(values['_descr'].replace(/<[^>]+>/g,''));
+    this.announce = ~~values['announce'];
+    this.description = goog.string.unescapeEntities(values['descr'].replace(/<[^>]+>/g,''));
     this.image = (values['image'] ? 'http://' + kassy.settings.getRegionId() + '.kassy.ru/media/' + values['image'] : '');
     this.price = ~~values['marginprc'];
 
@@ -232,8 +233,8 @@ kassy.data.ShowTypeModel = function(values) {
     this.name = values['name'];
     this.description = values['descr'];
 
-    this.order = ~~values['_order'];
-    this.other = ~~values['_other'];
+    this.order = ~~values['order'];
+    this.other = ~~values['other'];
 
     var icon = values['icon'];
     if (goog.isDef(icon)) {

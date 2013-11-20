@@ -30,14 +30,30 @@ kassy.data.DataManager = function() {
     /** @type {Object.<string, {ctor: kassy.data.ModelCtor, itemName, requestModel}>} */
     this.modelMap_ = {
         'subdivision': {ctor: kassy.data.SubdivisionModel},
-        'building': {ctor: kassy.data.BuildingModel},
-        'building_type': {ctor: kassy.data.BuildingTypeModel},
+        'building': {
+            ctor: kassy.data.BuildingModel,
+            itemName: 'building',
+            requestModel: 'page_building'
+        },
+        'building_type': {
+            ctor: kassy.data.BuildingTypeModel,
+            itemName: 'building_type',
+            requestModel: 'page_building_type'
+        },
         'hall': {ctor: kassy.data.HallModel},
         'section': {ctor: kassy.data.SectionModel},
         'place': {ctor: kassy.data.PlaceModel},
         'event': {ctor: kassy.data.EventModel},
-        'show': {ctor: kassy.data.ShowModel},
-        'show_type': {ctor: kassy.data.ShowTypeModel},
+        'show': {
+            ctor: kassy.data.ShowModel,
+            itemName: 'show',
+            requestModel: 'page_show'
+        },
+        'show_type': {
+            ctor: kassy.data.ShowTypeModel,
+            itemName: 'show_type',
+            requestModel: 'page_show_type'
+        },
         'event_places': {
             ctor: kassy.data.EventPlaceModel,
             itemName: 'place',
@@ -56,7 +72,7 @@ kassy.data.DataManager = function() {
  */
 kassy.data.DataManager.elementToModel = function(element, modelCtor) {
     var fields = element.attributes,
-        stateField = fields.getNamedItem('_state'),
+        stateField = fields.getNamedItem('state'),
         // Запись является разрешенной, если у неё нет поля state или его значение неравно '0'
         isEnabled = (!goog.isDefAndNotNull(stateField) || (goog.isDefAndNotNull(stateField) && stateField.value !== '0'));
 
@@ -176,7 +192,7 @@ kassy.data.DataManager.sendRequestV3 = function(options, success, error) {
 
     var requestValue = goog.getMsg(request_template, {
         'db': kassy.settings.getRegionId(),
-        'module': options.module,
+        'module': (options.requestModel ? options.requestModel : options.module),
         'authId': kassy.settings.getAuthId(),
         'authKey': kassy.settings.getAuthKey()
     });

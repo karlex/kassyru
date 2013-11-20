@@ -4,3 +4,4 @@ android/bin/
 .DS_Store
 ios/www/js/main.js
 task/
+closure/.idea/
