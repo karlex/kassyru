@@ -43,7 +43,11 @@ kassy.data.DataManager = function() {
         'hall': {ctor: kassy.data.HallModel},
         'section': {ctor: kassy.data.SectionModel},
         'place': {ctor: kassy.data.PlaceModel},
-        'event': {ctor: kassy.data.EventModel},
+        'event': {
+            ctor: kassy.data.EventModel,
+            itemName: 'event',
+            requestModel: 'page_event_list'
+        },
         'show': {
             ctor: kassy.data.ShowModel,
             itemName: 'show',
@@ -390,11 +394,12 @@ kassy.data.DataManager.prototype.findBuildingTypes = function(response) {
 };
 
 /**
+ * @param {string?} showTypeId
  * @param {goog.date.Date} dateTimeFrom
  * @param {goog.date.Date} dateTimeTo
  * @param {function(Array.<kassy.data.EventModel>, Object.<string, kassy.data.EventModel>, boolean)} response
  */
-kassy.data.DataManager.prototype.findEvents = function(dateTimeFrom, dateTimeTo, response) {
+kassy.data.DataManager.prototype.findEventsByShowTypeId = function(showTypeId, dateTimeFrom, dateTimeTo, response) {
     if (!dateTimeFrom) {
         dateTimeFrom = new goog.date.Date();
     }
@@ -411,6 +416,10 @@ kassy.data.DataManager.prototype.findEvents = function(dateTimeFrom, dateTimeTo,
         'date_to': unixDateTimeTo.toString()
     };
 
+    /*if (showTypeId) {
+        params['show_type_id'] = showTypeId
+    }*/
+
     this.find('event', 'id', params, function(events, eventIndex, success) {
         goog.array.sort(events, function(a, b) {
             return a.dateTime - b.dateTime;
@@ -421,6 +430,15 @@ kassy.data.DataManager.prototype.findEvents = function(dateTimeFrom, dateTimeTo,
             return (event.state > 0) && (event.dateTime * 1000 > Date.now());
         }), eventIndex, success);
     });
+};
+
+/**
+ * @param {goog.date.Date} dateTimeFrom
+ * @param {goog.date.Date} dateTimeTo
+ * @param {function(Array.<kassy.data.EventModel>, Object.<string, kassy.data.EventModel>, boolean)} response
+ */
+kassy.data.DataManager.prototype.findEvents = function(dateTimeFrom, dateTimeTo, response) {
+    kassy.data.DataManager.prototype.findEventsByShowTypeId(null, dateTimeFrom, dateTimeTo, response);
 };
 
 /**

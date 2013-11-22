@@ -60,7 +60,7 @@ goog.scope(function() {
         var defs = [new Def(), new Def(), new Def(), new Def()];
 
         var data = this.data_;
-        data.findEvents(null, null, function(events, eventIndex) { defs[0].callback(events); });
+        data.findEventsByShowTypeId(showTypeId, null, null, function(events, eventIndex) { defs[0].callback(events); });
         data.findShowType(function(showTypes, showTypeIndex) { defs[2].callback(showTypeIndex); });
         data.findBuildingTypes(function(buildingTypes, buildingTypeIndex) { defs[3].callback(buildingTypeIndex); });
 
