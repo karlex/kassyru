@@ -6,27 +6,50 @@ goog.require('goog.json');
 
 goog.require('relief.rpc.Command');
 
+/** @typedef {{ get:function(Array.<kassy.data.Model>) }} */
+kassy.rpc.Response;
+
 /** @typedef {{ name:string, attrs:Object.<string, *>, childs:(Array.<kassy.rpc.OptionsDataItem>|undefined) }} */
 kassy.rpc.OptionsDataItem;
 
-/** @typedef {{ module:string, data:Array.<kassy.rpc.OptionsDataItem>, success:function(Object), error:function() }} */
+/** @typedef {{ module:string, data:Array.<kassy.rpc.OptionsDataItem>, success:function(kassy.rpc.Response), error:function() }} */
 kassy.rpc.Options;
 
 /**
- * @param {Array.<Object>} rows
- * @param {function(new:kassy.data.Model, Object)} ctor
- * @return {Array.<kassy.data.Model>}
+ * @param {HTMLDocument} xml
+ * @param {string} entityName
+ * @param {function(new:kassy.data.Model, Object)} [opt_modelCtor]
+ * @returns {Array.<kassy.data.Model>}
  */
-kassy.rpc.map = function(rows, ctor) {
+kassy.rpc.getModelsFromXml = function(xml, entityName, opt_modelCtor) {
     var models = [];
+    var elements = xml.getElementsByTagName(entityName);
 
-    if (goog.isArray(rows)) {
-        for (var i = 0; i < rows.length; i++) {
-            models.push(new ctor(rows[i]));
+    for (var i = 0; i < elements.length; i++) {
+        var values = {};
+        var element = elements[i];
+
+        for (var j = 0; j < element.attributes.length; j++) {
+            var attribute = element.attributes[j];
+            values[attribute.name] = attribute.value;
+        }
+
+        if (goog.isFunction(opt_modelCtor)) {
+            models.push(new opt_modelCtor(values));
+        } else {
+            models.push(values);
         }
     }
 
     return models;
+};
+
+/**
+ * @param {Object.<string, string>} attrs
+ * @returns {Array}
+ */
+kassy.rpc.params = function(attrs) {
+    return [ { name: 'params', attrs: attrs } ]
 };
 
 /**
@@ -43,12 +66,10 @@ goog.scope(function() {
 
     /**
      * @param {kassy.rpc.Options} options
-     * @param {function(goog.net.XhrIo)} onSuccess
-     * @param {function(goog.net.XhrIo)} onFailure
      * @constructor
      * @extends {relief.rpc.Command}
      */
-    kassy.rpc.BaseCommand = function(options, onSuccess, onFailure) {
+    kassy.rpc.BaseCommand = function(options) {
         this.request_ = {
             db: kassy.settings.getRegionId(),
             authId: kassy.settings.getAuthId(),
@@ -60,27 +81,10 @@ goog.scope(function() {
         var url = 'https://api.kassy.ru/request/',
             method = 'POST';
 
-        goog.base(this, onSuccess, onFailure, this.request_.module + hash(), url, method, 0);
-
-        /*this.isUpdate_ = !!options.isUpdate;
-        this.writeToCache = true;*/
+        goog.base(this, options.success, options.error, this.request_.module + hash(), url, method, 0);
     };
     goog.inherits(kassy.rpc.BaseCommand, relief.rpc.Command);
     var BaseCommand = kassy.rpc.BaseCommand;
-
-    /**
-     * Create a Sha1 checksum of the post contents.
-     *
-     * @param {Object} post The post to hash.
-     * @return {string} The resulting 20-byte hexadecimal (uppercase) checksum.
-     * @private
-     */
-    BaseCommand.prototype.hashPost_ = function(post) {
-        var sha = new goog.crypt.Sha1();
-        sha.update(post.getContent());
-        var hash = sha.digest();
-        return goog.crypt.byteArrayToHex(hash).toUpperCase();
-    };
 
     /**
      * @inheritDoc
@@ -90,16 +94,60 @@ goog.scope(function() {
 
         var xml =
             '<?xml version="1.0" encoding="utf-8"?>' +
-            '<request db="' + request.db + '" module="' + request.module + '" protocol="xml" version="3.0">' +
-            this.itemToXml_(request.data) +
-            '<auth id="' + request.authId + '" key="' + request.authKey + '" />' +
-            '</request>';
+            '<request db="' + request.db + '" module="' + request.module + '" protocol="xml" version="3.0">';
 
-        return goog.Uri.QueryData.createFromMap({'request': xml}).toString();
+        for (var i = 0; i < request.data.length; i++) {
+            xml += this.itemToXml_(request.data[i]);
+        }
+
+        xml += '<auth id="' + request.authId + '" key="' + request.authKey + '" /></request>';
+
+        var data = goog.Uri.QueryData.createFromMap({'request': xml}).toString();
+
+        window.console.log('REQUEST:' + goog.string.urlDecode(data));
+
+        return data;
     };
 
     /**
-     * @param {} item
+     * Callback for successful server requests.
+     *
+     * @param {goog.events.Event} event The COMPLETE event for the XHR Req.
+     * @override
+     */
+    BaseCommand.prototype.onSuccess = function(event) {
+        //window.console.log('RESPONSE:' + event.target.getResponseText());
+
+        var xml = event.target.getResponseXml(),
+            response = {
+                get: goog.partial(kassy.rpc.getModelsFromXml, xml)
+            },
+            result = response.get('result')[0],
+            resultCode = (result && goog.isDef(result['code']) ? ~~result['code'] : 0);
+
+        window.console.log('result code: ' + resultCode);
+
+        if (resultCode === 1) {
+            this.callersOnSuccess(response);
+        }
+        else {
+            this.callersOnFailure();
+        }
+    };
+
+
+    /**
+     * Callback for failed server responses.
+     *
+     * @param {goog.events.Event} event The COMPLETE event for the XHR Req.
+     * @override
+     */
+    BaseCommand.prototype.onFailure = function(event) {
+        this.callersOnFailure();
+    };
+
+    /**
+     * @param {kassy.rpc.OptionsDataItem} item
      * @return {string}
      * @private
      */
@@ -107,7 +155,10 @@ goog.scope(function() {
         var xml = '<' + item.name;
 
         for (var key in item.attrs) {
-            xml += ' ' + key + '="' + item.attrs[key] + '"';
+            var value = item.attrs[key];
+            if (goog.isDef(value)) {
+                xml += ' ' + key + '="' + value + '"';
+            }
         }
 
         if (goog.isArray(item.childs) && item.childs.length > 0) {
@@ -124,75 +175,4 @@ goog.scope(function() {
 
         return xml;
     };
-
-    /**
-     * Callback for successful server requests.
-     *
-     * @param {goog.net.XhrManager.Event} event The COMPLETE event for the XHR Req.
-     * @override
-     */
-    BaseCommand.prototype.onSuccess = function(event) {
-        var resp = event.target.getResponseXml(),
-            status = resp['status'];
-
-        if (status === BaseCommand.Response.SUCCESS) {
-            var slug = resp['slug'];
-            this.post_.setSlug(slug);
-            this.callersOnSuccess(slug);
-        }
-        else {
-            this.callersOnFailure(resp);
-        }
-    };
-
-
-    /**
-     * Callback for failed server responses.
-     *
-     * @param {goog.net.XhrManager.Event} event The COMPLETE event for the XHR Req.
-     * @override
-     */
-    BaseCommand.prototype.onFailure = function(event) {
-        /** @preserveTry */
-        try {
-            var resp = event.target.getResponseXml();
-        }
-        catch (e) {
-            this.callersOnFailure(BaseCommand.Response.UNKNOWN_ERROR);
-            return;
-        }
-
-        this.callersOnFailure(resp['status']);
-    };
-
-
-    /*
-     * @return {Array.<string>} The unique slug for this post, which is used as a
-     * key name on the server.
-     *
-     * @override
-     */
-    /*BaseCommand.prototype.getCacheKeys = function() {
-        var key = this.post_.getCacheKey();
-        if (key) {
-            return [key];
-        }
-        else {
-            return [];
-        }
-    };/*
-
-
-    /*
-     * @return {Array.<{key: string, value: rb.post.BlogPost}>} An array of cache
-     *    key/value pairs.
-     * @override
-     */
-    /*BaseCommand.prototype.getCacheValues = function() {
-        var post = this.post_;
-        return [{
-            key: post.getCacheKey(),
-            value: post
-        }];
-    };*/
 });

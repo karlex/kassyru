@@ -1,13 +1,10 @@
-/**
- * @fileoverview
- */
-
 goog.provide('kassy.handlers.MovieList');
 
 goog.require('kassy.handlers.BaseHandler');
 goog.require('kassy.ui.SearchField');
 goog.require('kassy.views.movie');
 goog.require('kassy.utils');
+goog.require('kassy.rpc.GetEventList');
 
 goog.require('goog.string');
 goog.require('goog.date.Date');
@@ -46,6 +43,18 @@ goog.scope(function() {
 
         var showTypeId = goog.string.urlDecode(path.params);
         var buildingTypeId = kassy.settings.getBuildingTypeIdByShowTypeId(showTypeId);
+
+        this.executeRPC(new kassy.rpc.GetEventList({
+            showTypeId: showTypeId,
+            response: function(eventList) {
+                window.console.log('eventList:' + goog.debug.expose(eventList));
+                /*if (eventList) {
+
+                } else {
+                    // error
+                }*/
+            }
+        }));
 
         this.loadAndShow_(showTypeId, buildingTypeId);
     };

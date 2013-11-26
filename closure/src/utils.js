@@ -34,6 +34,15 @@ kassy.utils.formatDDMMMM = function(dateTime) {
 };
 
 /**
+ * @param value
+ * @param defaultValue
+ * @return {*}
+ */
+kassy.utils.getOrDef = function(value, defaultValue) {
+    return (goog.isDef(value) ? value : defaultValue);
+};
+
+/**
  * @param {function(?)} fn
  * @param {number} delay - In ms
  */

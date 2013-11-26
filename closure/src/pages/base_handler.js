@@ -19,6 +19,12 @@ kassy.handlers.BaseHandler = function(sp) {
     this.sp_ = sp;
 
     /**
+     * @type {relief.rpc.RPCService}
+     * @private
+     */
+    this.rpc_ = sp.getRPCService();
+
+    /**
      * @type {goog.events.EventHandler}
      */
     this.handler = new goog.events.EventHandler(this);
@@ -43,6 +49,13 @@ kassy.handlers.BaseHandler = function(sp) {
      * @protected
      */
     this.scroll_ = null;
+};
+
+/**
+ * @param {relief.rpc.Command} command
+ */
+kassy.handlers.BaseHandler.prototype.executeRPC = function(command) {
+    this.rpc_.execute(command);
 };
 
 /**

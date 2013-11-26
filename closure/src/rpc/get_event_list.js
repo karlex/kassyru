@@ -13,41 +13,41 @@ goog.scope(function () {
      */
     kassy.rpc.EventListType;
 
-    /**
-     * @param value
-     * @param defaultValue
-     * @return {*}
-     */
-    var getOrDef = function(value, defaultValue) {
-        return (goog.isDef(value) ? value : defaultValue);
-    };
+    var getOrDef = kassy.utils.getOrDef;
 
     /**
-     * @param {{ showTypeId, dateFrom, dateTo, isRecommend, response:function(kassy.rpc.EventListType) }} options
+     * @param {{ showTypeId, dateFrom:(goog.date.Date|undefined), dateTo:(goog.date.Date|undefined), isRecommend, response:function(kassy.rpc.EventListType?) }} options
      * @constructor
      * @extends {kassy.rpc.BaseCommand}
      */
     kassy.rpc.GetEventList = function(options) {
+        if (!options.dateFrom) {
+            options.dateFrom = new goog.date.Date();
+        }
+
+        if (!options.dateTo) {
+            options.dateTo = options.dateFrom.clone();
+            options.dateTo.add(new goog.date.Interval(goog.date.Interval.DAYS, kassy.config.daysLimit));
+        }
+
+        var unixDateTimeFrom = Math.round(options.dateFrom.getTime() / 1000);
+        var unixDateTimeTo = Math.round(options.dateTo.getTime() / 1000);
+
         goog.base(this, {
             module: 'page_event_list',
-            data: [
-                {
-                    name: 'params',
-                    attrs: {
-                        'show_type_id': getOrDef(options.showTypeId, ''),
-                        'date_from': options.dateFrom,
-                        'date_to': options.dateTo,
-                        'is_recommend': options.isRecommend
-                    }
-                }
-            ],
-            success: function(data) {
+            data: kassy.rpc.params({
+                //'show_type_id': getOrDef(options.showTypeId, ''),
+                'date_from': unixDateTimeFrom.toString(),
+                'date_to': unixDateTimeTo.toString(),
+                'is_recommend': options.isRecommend
+            }),
+            success: function(response) {
                 options.response({
-                    showTypes: kassy.rpc.map(data['shows_types'], kassy.data.ShowTypeModel),
-                    shows: kassy.rpc.map(data['shows'], kassy.data.ShowModel),
-                    buildings: kassy.rpc.map(data['buildings'], kassy.data.BuildingModel),
-                    halls: kassy.rpc.map(data['halls'], kassy.data.HallModel),
-                    events: kassy.rpc.map(data['events'], kassy.data.EventModel)
+                    showTypes: response.get('show_type', kassy.data.ShowTypeModel),
+                    shows: response.get('show', kassy.data.ShowModel),
+                    buildings: response.get('building', kassy.data.BuildingModel),
+                    halls: response.get('hall', kassy.data.HallModel),
+                    events: response.get('event', kassy.data.EventModel)
                 })
             },
             error: function() {

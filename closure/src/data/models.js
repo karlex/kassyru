@@ -201,8 +201,7 @@ kassy.data.ShowModel = function(values) {
     this.ageRestriction = values['age_restriction'];
     this.rating = ~~values['rating'];
     this.duration = ~~values['duration']; // сек.
-    this.announce = ~~values['announce'];
-    this.description = goog.string.unescapeEntities(values['descr'].replace(/<[^>]+>/g,''));
+    this.description = goog.string.unescapeEntities(values['announce'].replace(/<[^>]+>/g,''));
     this.image = (values['image'] ? 'http://' + kassy.settings.getRegionId() + '.kassy.ru/media/' + values['image'] : '');
     this.price = ~~values['marginprc'];
 

@@ -93,7 +93,7 @@ goog.scope(function() {
                     }
                 }
             }
-            catch(e) {
+            catch(ex) {
                 window.console.log('RESPONSE: Invalid JSON format');
 
                 response(null, [
