@@ -15,7 +15,7 @@
             </li>
             {foreach $type in $types}
                 <li>
-                    <div class="link" href="#movie/list/{$type.id}">
+                    <div class="link" href="#movie/list/{$type.namei}">
                         <span class="i{$type.icon}"><i class="s_i"></i>{$type.name}</span>
                         <i class="s_i"></i>
                     </div>
@@ -27,16 +27,8 @@
 
 /**
  * @param days
- * @param showType
- * @param buildingType
  */
 {template .List}
-    {if false and $showType and $buildingType}
-        <section class="change_buttons cf">
-            <span class="link moves s_i active">{$showType.name}</span>
-            <a class="link places s_i" href="#place/list/{$buildingType.id}">{$buildingType.name}</a>
-        </section>
-    {/if}
     {foreach $day in $days}
         <div class="today_date">
             <p>{$day.date}</p>

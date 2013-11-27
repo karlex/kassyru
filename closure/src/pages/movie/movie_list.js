@@ -41,82 +41,50 @@ goog.scope(function() {
         this.searchField_ = new kassy.ui.SearchField(this.getContentElement());
         this.handler.listen(this.searchField_, goog.events.EventType.CHANGE, this.onSearch_, false, this);
 
-        var showTypeId = goog.string.urlDecode(path.params);
-        var buildingTypeId = kassy.settings.getBuildingTypeIdByShowTypeId(showTypeId);
+        var showNameI = goog.string.urlDecode(path.params);
+
+        var barrier = this.barrier_ = new goog.async.Deferred();
 
         this.executeRPC(new kassy.rpc.GetEventList({
-            showTypeId: showTypeId,
-            response: function(eventList) {
-                window.console.log('eventList:' + goog.debug.expose(eventList));
-                /*if (eventList) {
-
-                } else {
-                    // error
-                }*/
-            }
+            showTypeId: showNameI,
+            response: barrier.callback.bind(barrier)
         }));
 
-        this.loadAndShow_(showTypeId, buildingTypeId);
+        barrier.addCallback(this.gotEventList_, this);
     };
 
     /**
-     * @param {string} showTypeId
+     * @param {kassy.rpc.EventListType} eventList
      */
-    MovieList.prototype.loadAndShow_ = function(showTypeId, buildingTypeId) {
-        var timePoint = Date.now();
+    MovieList.prototype.gotEventList_ = function(eventList) {
+        var events = [];
 
-        var Def = goog.async.Deferred;
-        var defs = [new Def(), new Def(), new Def(), new Def()];
-
-        var data = this.data_;
-        data.findEventsByShowTypeId(showTypeId, null, null, function(events, eventIndex) { defs[0].callback(events); });
-        data.findShowType(function(showTypes, showTypeIndex) { defs[2].callback(showTypeIndex); });
-        data.findBuildingTypes(function(buildingTypes, buildingTypeIndex) { defs[3].callback(buildingTypeIndex); });
-
-        // После получения списка событий, запрашиваем индекс только необходимых(!) зрелищь
-        defs[0].addCallback(function(events) {
-            var showIds = goog.array.map(events, function(event) { return event.showId; });
-            data.findShows(showIds, function(shows, showIndex) { defs[1].callback(showIndex); });
-        });
-
-        this.barrier_ = new goog.async.DeferredList(defs);
-        this.barrier_.addCallback(function(results) {
-            window.console.log('SHOW LOAD TIME: ' + (Date.now() - timePoint));
-
-            timePoint = Date.now();
-
-            var events = results[0][1];
-            var showIndex = results[1][1];
-            var showTypeIndex = results[2][1];
-            var buildingTypeIndex = results[3][1];
-
-            var buildingType, showType;
-            this.showType_ = showType = showTypeIndex[showTypeId];
-            this.buildingType_ = buildingType = buildingTypeIndex[buildingTypeId];
+        if (eventList) {
+            var showIndex = kassy.rpc.index(eventList.shows);
+            var showType = this.showType_ = eventList.showTypes[0];
 
             if (showType instanceof kassy.data.ShowTypeModel) {
                 this.setContentTitle(showType.name);
             }
 
-            var filteredEvents = [];
-
-            goog.array.forEach(events, function(event) {
+            // фильтруем и добавляем show
+            for (var i = 0; i < eventList.events.length; i++) {
+                var event = eventList.events[i];
                 if (event.state > 0) {
                     var show = showIndex[event.showId];
-                    if (show instanceof kassy.data.ShowModel && show.typeId == showTypeId) {
-                        var extEvent = goog.object.clone(event);
-                        extEvent.show = goog.object.clone(show);
-                        filteredEvents.push(extEvent);
+                    if (show instanceof kassy.data.ShowModel) {
+                        event.show = show;
+
+                        events.push(event);
                     }
                 }
-            });
+            }
+        }
 
-            this.events_ = filteredEvents;
-            
-            window.console.log('SHOW BEFORE SHOW TIME: ' + (Date.now() - timePoint));
+        // запомним для поиска
+        this.events_ = events;
 
-            this.show_(filteredEvents);
-        }, this);
+        this.show_(events);
     };
 
     /**
@@ -127,10 +95,9 @@ goog.scope(function() {
 
         var dateFormat = kassy.utils.groupDateFormat;
 
-        var buildingType = this.buildingType_,
-            showType = this.showType_;
+        var showType = this.showType_;
 
-        var days = this.days_ = [];
+        var days = [];
         var lastDay = null;
         var currGroupVal = -1;
         var eventDistinct = null;
@@ -150,8 +117,7 @@ goog.scope(function() {
 
         this.searchField_.setContentText(kassy.views.movie.List({
             days: days,
-            showType: showType,
-            buildingType: buildingType
+            showType: showType
         }));
 
         this.setScroll();
@@ -163,17 +129,14 @@ goog.scope(function() {
     MovieList.prototype.onSearch_ = function(e) {
         if (!this.events_) return;
 
-        var buildingType = this.buildingType_,
-            showType = this.showType_;
-
         if (e.search && e.search.length > 0) {
-
             var filterFn = goog.partial(function(search, event) {
                 return goog.string.startsWith(event.show.name.toLowerCase(), search);
             }, e.search.toLowerCase());
 
             this.show_(goog.array.filter(this.events_, filterFn));
-        } else {
+        }
+        else {
             this.show_(this.events_);
         }
     };

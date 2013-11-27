@@ -45,6 +45,21 @@ kassy.rpc.getModelsFromXml = function(xml, entityName, opt_modelCtor) {
 };
 
 /**
+ * @param {Array.<kassy.data.Model>} models
+ * @param {string=} opt_keyFieldName
+ * @return {Object.<*, kassy.data.Model>};
+ */
+kassy.rpc.index = function(models, opt_keyFieldName) {
+    var keyFieldName = (goog.isDef(opt_keyFieldName) ? opt_keyFieldName : 'id');
+    var index = {};
+    for (var i = 0; i < models.length; i++) {
+        var model = models[i];
+        index[model.get(keyFieldName)] = model;
+    }
+    return index;
+};
+
+/**
  * @param {Object.<string, string>} attrs
  * @returns {Array}
  */

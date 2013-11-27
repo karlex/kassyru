@@ -16,7 +16,14 @@ goog.scope(function () {
     var getOrDef = kassy.utils.getOrDef;
 
     /**
-     * @param {{ showTypeId, dateFrom:(goog.date.Date|undefined), dateTo:(goog.date.Date|undefined), isRecommend, response:function(kassy.rpc.EventListType?) }} options
+     * @param {{
+     *   showTypeId: (string|undefined),
+     *   buildingId: (number|undefined),
+     *   dateFrom: (goog.date.Date|undefined),
+     *   dateTo: (goog.date.Date|undefined),
+     *   isRecommend: (boolean|undefined),
+     *   response: function(kassy.rpc.EventListType?)
+     * }} options
      * @constructor
      * @extends {kassy.rpc.BaseCommand}
      */
@@ -36,10 +43,11 @@ goog.scope(function () {
         goog.base(this, {
             module: 'page_event_list',
             data: kassy.rpc.params({
-                //'show_type_id': getOrDef(options.showTypeId, ''),
+                'building_id': options.buildingId,
+                'show_type_id': options.showTypeId,
                 'date_from': unixDateTimeFrom.toString(),
                 'date_to': unixDateTimeTo.toString(),
-                'is_recommend': options.isRecommend
+                'is_recommend': (goog.isDef(options.isRecommend) ? ~~options.isRecommend : undefined)
             }),
             success: function(response) {
                 options.response({

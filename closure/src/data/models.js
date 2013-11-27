@@ -230,6 +230,7 @@ kassy.data.ShowTypeModel = function(values) {
     goog.base(this, values);
     this.id = values['id'];
     this.name = values['name'];
+    this.namei = values['namei'];
     this.description = values['descr'];
 
     this.order = ~~values['order'];
