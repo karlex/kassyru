@@ -131,8 +131,6 @@ goog.scope(function() {
      * @override
      */
     BaseCommand.prototype.onSuccess = function(event) {
-        //window.console.log('RESPONSE:' + event.target.getResponseText());
-
         var xml = event.target.getResponseXml(),
             response = {
                 get: goog.partial(kassy.rpc.getModelsFromXml, xml)

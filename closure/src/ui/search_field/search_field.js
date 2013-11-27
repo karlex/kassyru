@@ -29,10 +29,27 @@ goog.scope(function() {
          * @type {Element}
          * @private
          */
+        this.searchLblEl_ = goog.dom.getElement('search_label');
+
+        /**
+         * @type {Element}
+         * @private
+         */
         this.searchFldEl_ = goog.dom.getElement('search_field');
 
-        this.eh_.listen(this.searchFldEl_, [goog.events.EventType.TOUCHSTART, goog.events.EventType.MOUSEDOWN],
-            function(e) { e.stopPropagation(); }, false, this);
+        this.eh_.listen(this.searchFldEl_, goog.events.EventType.FOCUS, function(e) {
+            this.searchLblEl_.style.display = 'none';
+        }, false, this);
+
+        this.eh_.listen(this.searchFldEl_, goog.events.EventType.BLUR, function(e) {
+            if (!e.target.value.length) {
+                this.searchLblEl_.style.display = 'block';
+            }
+        }, false, this);
+
+        this.eh_.listen(this.searchFldEl_, goog.events.EventType.TOUCHSTART, function(e) {
+            e.stopPropagation();
+        }, false, this);
 
         this.eh_.listen(this.searchFldEl_,
             goog.events.EventType.KEYDOWN, kassy.utils.debounce(this.onKeyUp_, 500), false, this);

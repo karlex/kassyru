@@ -2,10 +2,11 @@
 
 /**
  * @param types
+ * @param subdivision
  */
 {template .Types}
     <section class="interests">
-        <h2>Что вам интересно?</h2>
+        <h2>{if $subdivision}{$subdivision.name}{else}Что вам интересно?{/if}</h2>
         <ul>
             {foreach $type in $types}
                 <li>
@@ -21,16 +22,8 @@
 
 /**
  * @param places
- * @param showType
- * @param buildingType
  */
 {template .List}
-    {if false and $showType and $buildingType}
-        <section class="change_buttons cf">
-            <a class="link moves s_i" href="#movie/list/{$showType.id}">{$showType.name}</a>
-            <span class="link places s_i active">{$buildingType.name}</span>
-        </section>
-    {/if}
     <section class="movies_list">
         {foreach $place in $places}
             <div class="link movie_item" href="#place/movies/{$place.id}">
@@ -61,7 +54,7 @@
             {/if}
         </address>
 
-        <p class="about">{$place.description |noAutoescape}</p>
+        <!--p class="about">{$place.description |noAutoescape}</p-->
 
         {if $place.phones.length > 0}
             <div class="link tel" href="tel:{$place.phones.0}">

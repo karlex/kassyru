@@ -2,10 +2,11 @@
 
 /**
  * @param types
+ * @param subdivision
  */
 {template .Types}
     <section class="interests">
-        <h2>Что вам интересно?</h2>
+        <h2>{if $subdivision}{$subdivision.name}{else}Что вам интересно?{/if}</h2>
         <ul>
             <li>
                 <div class="link" href="#movie/recommend">
@@ -37,8 +38,11 @@
             {foreach $event in $day.events}
                 <div class="link movie_item" href="#movie/places/{$event.show.id}">
                     <h3>{$event.show.name}</h3>
-                    <p>{$event.show.ageRestriction}</p>
-                    <div class="rating s_i {$event.show.ratingEn}"></div>
+                    <p>
+                        {if $event.show.ageRestriction}{$event.show.ageRestriction}, {/if}
+                        {$event.timeHHMM},
+                        {if $event.priceMin != $event.priceMax}{$event.priceMin} —{/if} {$event.priceMax} руб.
+                    </p>
                     {if $event.isRecommend}
                         <div class="awesome s_i"></div>
                     {/if}

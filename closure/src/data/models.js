@@ -152,6 +152,8 @@ kassy.data.EventModel = function(values) {
     this.state = ~~values['state'];
     this.isPremier = ~~values['is_prm'];
     this.isRecommend = ~~values['is_recommend'];
+    this.priceMin = ~~values['price_min'];
+    this.priceMax = ~~values['price_max'];
 
     this.timeHHMM = kassy.data.EventModel.getTimeHHMM(this.dateTime);
 };

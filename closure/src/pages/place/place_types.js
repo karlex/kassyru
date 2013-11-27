@@ -28,10 +28,18 @@ goog.scope(function() {
         this.searchField_ = new kassy.ui.SearchField(this.getContentElement());
         this.handler.listen(this.searchField_, goog.events.EventType.CHANGE, this.onSearch_, false, this);
 
-        this.data_.findBuildingTypes(function(types) {
-            this.types_ = types;
-            this.showBuildingTypes_(types)
-        }.bind(this));
+        var defs = [new goog.async.Deferred(), new goog.async.Deferred()];
+        var barrier = this.barrier_ = new goog.async.DeferredList(defs);
+
+        var data = this.data_;
+        data.findSubdivision(kassy.settings.getRegionId(), function(subdivisions) { defs[0].callback(subdivisions[0]); });
+        data.findBuildingTypes(function(types) { defs[1].callback(types); });
+
+        barrier.addCallback(function(results) {
+            this.subdivision_ = results[0][1];
+            this.types_ = results[1][1];
+            this.showBuildingTypes_(this.types_);
+        }, this);
     };
 
     /**
@@ -47,7 +55,10 @@ goog.scope(function() {
             return (type.kind === 1 && type.state === 1);
         });
 
-        this.searchField_.setContentText(kassy.views.place.Types({types: filteredTypes}));
+        this.searchField_.setContentText(kassy.views.place.Types({
+            types: filteredTypes,
+            subdivision: this.subdivision_
+        }));
         this.setScroll();
         this.setLoadingVisible(false);
     };

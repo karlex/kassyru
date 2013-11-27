@@ -31,21 +31,16 @@ goog.scope(function() {
         this.barrier_ = new goog.async.Deferred();
         this.barrier_.addCallback(this.show_, this);
 
-        this.data_.findSubdivisions(function(subdivisions) {
-            this.barrier_.callback(subdivisions);
+        this.data_.findSubdivision(kassy.settings.getRegionId(), function(subdivisions) {
+            this.barrier_.callback(subdivisions[0]);
         }.bind(this));
     };
 
     /**
-     * @param {Array.<kassy.data.SubdivisionModel>} subdivisions
+     * @param {kassy.data.SubdivisionModel} subdivision
      * @private
      */
-    Settings.prototype.show_ = function(subdivisions) {
-        var regionId = kassy.settings.getRegionId();
-        var subdivision = goog.array.find(subdivisions, function(subdivision) {
-            return subdivision.db == regionId;
-        });
-
+    Settings.prototype.show_ = function(subdivision) {
         if (!subdivision) {
             this.setContentText('<center>Пусто</center>');
             return;

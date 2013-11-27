@@ -112,6 +112,7 @@ h2 {font-size: 2.125em; font-weight: bold; color: #000;}
 h3 {font-size: 2.25em; font-weight: normal; color: #3d3a3a;}
 button {font-size: 1.5em; font-weight: bold; color: #fff; background: none; padding: 0; border: none;}
 
+h1, h2, h3, h4, h5, h6,
 .overflow-ellipsis,
 .overflow-ellipsis * {
     text-overflow: ellipsis;
@@ -176,11 +177,11 @@ section .link.highlight * {
 .auth > .item > .label {font-size: 1.5em; color: #000; font-weight: bold; position: absolute; left: 24px; top: 30px;}
 .auth .variant_input,
 .auth .password_input,
-.auth .email_input {font-size: 1.5em; width: 50%; border: none; position: relative; left: 70px; top: 0; line-height: 3em; z-index: 50; outline: none; text-align:left; float:right; margin-right:100px;}
+.auth .email_input {font-size: 1.5em; border: none; position: absolute; left: 150px; right: 10px; top: 0; line-height: 3em; z-index: 50; outline: none; text-align:left; float:right;}
 .auth_comment {font-size: 1.5em; color: #a0a0a0;}
 .auth_alert {font-size: 1.5em; color: #ff0000;}
 
-.main-container > section.place > h2 {padding-right: 85px;}
+.main-container > section.place > h2 {/*padding-right: 85px;*/}
 .main-container > section.place > address {font-size: 1.5em; color: #3690bb; font-style: normal; margin-bottom: 23px; position: relative; top: 4px;}
 .main-container > section.place .on_map {color: #b2b1b1; text-decoration: none; position: absolute; right: 0; overflow: visible;}
 .main-container > section.place .on_map > i {background-position: -35px -61px; display: block; width: 18px; height: 27px; position: absolute; right: -20px; top: -2px;}
@@ -314,7 +315,7 @@ section .link.highlight * {
 
 .main-container section.interests {padding: 17px 0 26px;}
 .main-container section.interests.paddings {padding: 0;}
-.main-container section.interests > h2 {font-size: 1.375em; color: #ff7e00; padding: 15px 0 23px 93px; border-bottom: 1px solid #b1b1b1;}
+.main-container section.interests > h2 {font-size: 2.125em/*1.375em*/; color: #ff7e00; padding: 15px 0 23px 93px; border-bottom: 1px solid #b1b1b1;}
 .main-container section.interests > ul {font-size: 2.125em; font-weight: bold;}
 .main-container section.interests > ul > li {border-bottom: 1px solid #b1b1b1;}
 .main-container section.interests > ul > li > .link {color: #000; text-decoration: none; display: block; padding: 16px 0 13px 93px; position: relative;}
@@ -442,8 +443,8 @@ section .link.highlight * {
 .search_field__rt {position: absolute; right: 0; top: 0; width: 88px; height: 100%; background-position: 100% -704px;}
 .search_field button {display: block; width: 28px; height: 30px; position: absolute; left: 27px; top: 31px;}
 .search_field button > i {background-position: -142px -110px; display: block; width: 28px; height: 30px;}
-.search_field label {font-size: 1.75em; color: #b4b3b4; position: absolute; left: 70px; top: 15px; line-height: 58px; z-index: 100;}
-.search_field input {font-size: 1.75em; color: #368fbb; position: absolute; left: 70px; top: 15px; right: 30px; line-height: 58px; background: transparent; z-index: 50; outline: none; border: none; }
+.search_field .label {font-size: 1.75em; color: #b4b3b4; position: absolute; left: 70px; top: 15px; line-height: 58px; z-index: 100;}
+.search_field input {font-size: 1.75em; color: #368fbb; position: absolute; left: 70px; top: 15px; right: 30px; line-height: 58px; background: transparent; z-index: 150; outline: none; border: none; }
 
 .main-container > .i_go {background: #f3f3f3; height: 88px; margin: 26px 40px 0; border: 1px solid #bbb; border-radius: 25px; position: relative;}
 .main-container > .i_go > .checkbox {width: 350px; position: absolute; left: 24px; top: 15px;}
@@ -528,11 +529,11 @@ section .link.highlight * {
     .auth > .item > .label {font-size: 0.8em; left: 12px; top: 15px;}
     .auth .variant_input,
     .auth .password_input,
-    .auth .email_input {font-size: 0.8em; left: 35px; top: 0; margin-right:50px;}
+    .auth .email_input {font-size: 0.8em; left: 75px; top: 0; right: 5px;}
     .auth_comment {font-size: 0.8em;}
     .auth_alert {font-size: 0.8em;}
 
-    .main-container > section.place > h2 {padding-right: 43px;}
+    .main-container > section.place > h2 {/*padding-right: 43px;*/}
     .main-container > section.place > address {font-size: .75em; margin-bottom: 12px; top: -1px;}
     .main-container > section.place .on_map {}
     .main-container > section.place .on_map > i {background-position: -18px -31px; width: 9px; height: 14px; right: -10px; top: -1px;}
@@ -637,7 +638,7 @@ section .link.highlight * {
     .movies_list > .movie_item > .rating.five {background-position: -165px -44px;}
 
     .main-container section.interests {padding: 8px 0 13px;}
-    .main-container section.interests > h2 {font-size: .6875em; padding: 8px 0 12px 47px;}
+    .main-container section.interests > h2 {font-size: 1.0625em/*.6875em*/; padding: 8px 0 12px 47px;}
     .main-container section.interests > ul {font-size: 1.0625em; font-weight: bold;}
     .main-container section.interests > ul > li > .link {padding: 8px 0 7px 47px;}
     .main-container section.interests > ul > li > .link > span > i {width: 30px; height: 30px; left: -41px; top: -4px; background-position: -90px -322px;}
@@ -742,7 +743,7 @@ section .link.highlight * {
     .search_field__rt {background-position: 100% -352px;}
     .search_field button {width: 14px; height: 15px; left: 14px; top: 15px;}
     .search_field button > i {background-position: -71px -55px; width: 14px; height: 15px;}
-    .search_field label {font-size: .875em; left: 35px; top: 8px; line-height: 28px;}
+    .search_field .label {font-size: .875em; left: 35px; top: 8px; line-height: 28px;}
     .search_field input {font-size: .875em; left: 35px; top: 8px; line-height: 28px; right: 15px; }
 
     .footer-container {background: url(../img/bg/footer32.png) repeat-x left top; height: 44px; position: relative;}

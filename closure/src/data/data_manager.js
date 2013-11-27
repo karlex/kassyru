@@ -282,6 +282,18 @@ kassy.data.DataManager.sendXmlRequest_ = function(requestValue, success, error) 
 };
 
 /**
+ * @param {string} db
+ * @param {function(Array.<kassy.data.SubdivisionModel>, Object.<string, kassy.data.SubdivisionModel>, boolean)} response
+ */
+kassy.data.DataManager.prototype.findSubdivision = function(db, response) {
+    var params = {
+        'db': db
+    };
+
+    this.find('subdivision', 'id', params, response);
+};
+
+/**
  * @param {function(Array.<kassy.data.SubdivisionModel>, Object.<string, kassy.data.SubdivisionModel>, boolean)} response
  */
 kassy.data.DataManager.prototype.findSubdivisions = function(response) {
