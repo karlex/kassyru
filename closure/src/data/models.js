@@ -26,6 +26,8 @@ kassy.data.SubdivisionModel = function(values) {
     this.id = values['id'];
     this.name = values['name'];
     this.db = values['db'];
+    this.tz = values['tz'];
+    this.state = ~~values['state'];
 };
 goog.inherits(kassy.data.SubdivisionModel, kassy.data.Model);
 

@@ -30,27 +30,41 @@ goog.scope(function() {
          * @private
          */
         this.events_ = null;
+
+        /**
+         * @type {boolean}
+         * @protected
+         */
+        this.useShowTypeTitle_ = false;
     };
     goog.inherits(kassy.handlers.MovieList, kassy.handlers.BaseHandler);
     var MovieList = kassy.handlers.MovieList;
 
     /** @override */
     MovieList.prototype.handle_ = function(path) {
-        this.setContentTitle('Зрелища');
-
-        this.searchField_ = new kassy.ui.SearchField(this.getContentElement());
-        this.handler.listen(this.searchField_, goog.events.EventType.CHANGE, this.onSearch_, false, this);
-
         var showNameI = goog.string.urlDecode(path.params);
 
+        this.useShowTypeTitle_ = true;
+
+        this.setContentTitle('Зрелища');
+
+        this.initSearch_();
+
+        this.getEventList_({ showTypeId: showNameI });
+    };
+
+    MovieList.prototype.initSearch_ = function() {
+        this.searchField_ = new kassy.ui.SearchField(this.getContentElement());
+        this.handler.listen(this.searchField_, goog.events.EventType.CHANGE, this.onSearch_, false, this);
+    };
+
+    MovieList.prototype.getEventList_ = function(options) {
         var barrier = this.barrier_ = new goog.async.Deferred();
-
-        this.executeRPC(new kassy.rpc.GetEventList({
-            showTypeId: showNameI,
-            response: barrier.callback.bind(barrier)
-        }));
-
         barrier.addCallback(this.gotEventList_, this);
+
+        options.response = barrier.callback.bind(barrier);
+
+        this.executeRPC(new kassy.rpc.GetEventList(options));
     };
 
     /**
@@ -60,11 +74,14 @@ goog.scope(function() {
         var events = [];
 
         if (eventList) {
+            var timezone = eventList.subdivision.tz;
             var showIndex = kassy.rpc.index(eventList.shows);
-            var showType = this.showType_ = eventList.showTypes[0];
 
-            if (showType instanceof kassy.data.ShowTypeModel) {
-                this.setContentTitle(showType.name);
+            if (this.useShowTypeTitle_) {
+                var showType = eventList.showTypes[0];
+                if (showType) {
+                    this.setContentTitle(showType.name);
+                }
             }
 
             // фильтруем и добавляем show
@@ -72,9 +89,10 @@ goog.scope(function() {
                 var event = eventList.events[i];
                 if (event.state > 0) {
                     var show = showIndex[event.showId];
-                    if (show instanceof kassy.data.ShowModel) {
+                    if (show) {
                         event.show = show;
-
+                        event.date = kassy.utils.moment(event.dateTime, timezone, 'D MMMM, dddd');
+                        event.time = kassy.utils.moment(event.dateTime, timezone, 'HH:mm');
                         events.push(event);
                     }
                 }
@@ -93,20 +111,17 @@ goog.scope(function() {
     MovieList.prototype.show_ = function(events) {
         var timePoint = Date.now();
 
-        var dateFormat = kassy.utils.groupDateFormat;
-
-        var showType = this.showType_;
-
         var days = [];
         var lastDay = null;
-        var currGroupVal = -1;
+        var currGroupVal;
         var eventDistinct = null;
 
         goog.array.forEach(events, function(event) {
-            var groupVal = Math.floor(event.dateTime / 86400);
+            //var groupVal = Math.floor(event.dateTime / 86400);
+            var groupVal = event.date;
             if (groupVal != currGroupVal) {
                 currGroupVal = groupVal;
-                days.push(lastDay = {date: dateFormat(event.dateTime), events: []});
+                days.push(lastDay = { date: event.date, events: [] });
                 eventDistinct = {};
             }
             if (!eventDistinct[event.showId]) {
@@ -116,8 +131,7 @@ goog.scope(function() {
         });
 
         this.searchField_.setContentText(kassy.views.movie.List({
-            days: days,
-            showType: showType
+            days: days
         }));
 
         this.setScroll();

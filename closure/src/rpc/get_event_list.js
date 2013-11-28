@@ -4,6 +4,7 @@ goog.require('kassy.rpc.BaseCommand');
 
 goog.scope(function () {
     /** @typedef {{
+     *    subdivision: kassy.data.SubdivisionModel,
      *    showTypes: Array.<kassy.data.ShowTypeModel>,
      *    shows: Array.<kassy.data.ShowModel>,
      *    buildings: Array.<kassy.data.BuildingModel>,
@@ -12,8 +13,6 @@ goog.scope(function () {
      * }}
      */
     kassy.rpc.EventListType;
-
-    var getOrDef = kassy.utils.getOrDef;
 
     /**
      * @param {{
@@ -29,7 +28,7 @@ goog.scope(function () {
      */
     kassy.rpc.GetEventList = function(options) {
         if (!options.dateFrom) {
-            options.dateFrom = new goog.date.Date();
+            options.dateFrom = new goog.date.DateTime();
         }
 
         if (!options.dateTo) {
@@ -51,6 +50,7 @@ goog.scope(function () {
             }),
             success: function(response) {
                 options.response({
+                    subdivision: response.get('subdivision', kassy.data.SubdivisionModel)[0],
                     showTypes: response.get('show_type', kassy.data.ShowTypeModel),
                     shows: response.get('show', kassy.data.ShowModel),
                     buildings: response.get('building', kassy.data.BuildingModel),

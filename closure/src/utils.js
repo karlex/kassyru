@@ -34,6 +34,16 @@ kassy.utils.formatDDMMMM = function(dateTime) {
 };
 
 /**
+ * @param {number} date UNIX time in seconds
+ * @param {string} tz 'Asia/Yekaterinburg'
+ * @param {string} format 'MMMM Do YYYY, H:mm:ss a' (http://momentjs.com/)
+ * @return {string}
+ */
+kassy.utils.moment = function(date, tz, format) {
+    return window['moment'](date * 1000)['tz'](tz)['format'](format);
+};
+
+/**
  * @param value
  * @param defaultValue
  * @return {*}
