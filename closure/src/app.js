@@ -90,6 +90,7 @@ kassy.App = function () {
     this.cache_ = cache = new relief.cache.Cache();
 
     var headers = new goog.structs.Map({
+        'Accept-Encoding': 'gzip,deflate',
         'Content-Type': 'application/x-www-form-urlencoded'
     });
 

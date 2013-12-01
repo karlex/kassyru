@@ -71,14 +71,17 @@
         </div>
         <section class="place_detail">
         {foreach $event in $day.events}
-            <div class="link" href="#order/details/{$event.show.id}/{$place.id}/{$day.dateRaw}">
+            <div class="link" href="#order/details/{$event.id}">
                 <span class="i{$event.show.type.icon}">
-                    <i class="s_i"></i>{$event.show.name}
+                    <i class="s_i"></i>
                 </span>
+                <div class="overflow-ellipsis">{$event.show.name}</div>
                 <ul class="cf">
-                    {foreach $time in $event.times}
-                        <li>{$time}</li>
-                    {/foreach}
+                    <li>{$event.hall.name},</li>
+                    <li>{$event.time}</li>
+                </ul>
+                <ul class="cf">
+                    <li>{if $event.priceMin != $event.priceMax} {$event.priceMin} —{/if} {$event.priceMax} руб.</li>
                 </ul>
                 <i class="s_i"></i>
             </div>

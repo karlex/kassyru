@@ -6,7 +6,8 @@
  * @param date
  * @param dateRaw
  * @param building
- * @param events
+ * @param hall
+ * @param time
  * @param full
  */
 {template .Details}
@@ -46,17 +47,8 @@
             <h3>{$building.name}</h3>
 
             <ul class="cf">
-                {foreach $event in $events}
-
-                    {if isFirst($event)}
-                        <li>{$event.hall.name}:</li>
-                    {elseif ($event.hallId != $events[index($event) - 1].hallId)}
-                        </ul><ul class="cf">
-                        <li>{$event.hall.name}:</li>
-                    {/if}
-
-                    <li>{$event.timeHHMM}</li>
-                {/foreach}
+                <li>{$hall.name}:</li>
+                <li>{$time}</li>
             </ul>
 
             <p class="all_dates">

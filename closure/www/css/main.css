@@ -240,8 +240,8 @@ section .link.highlight * {
 .main-container > section.movie_detail > .info > section > .about time > i {background-position: -53px -61px; display: block; width: 25px; height: 24px; position: absolute; left: 0; top: -1px;}
 .main-container > section.movie_detail > .info > section > .about .country {font-size: 1.125em; color: #a4a4a4;}
 .main-container > section.movie_detail > .about {padding: 29px 44px 21px; position: relative;}
-.main-container > section.movie_detail > .about > .preview {font-size: 1.5em; color: #787878; line-height: 1.2em;}
-.main-container > section.movie_detail > .about > .padding {padding-bottom: 13px;}
+.main-container > section.movie_detail > .about > .preview {font-size: 1.5em; color: #787878; line-height: 2em; max-height: 6em; padding: 0; overflow: hidden;}
+.main-container > section.movie_detail > .about > .padding {margin-bottom: 13px;}
 .main-container > section.movie_detail > .about > .link {color: #107da5; text-decoration: none; width: 160px; position: absolute; right: 19px; bottom: 10px; overflow: visible;}
 .main-container > section.movie_detail > .about > .link > i {background-position: -35px -61px; display: block; width: 18px; height: 27px; position: absolute; right: 0; top: -2px;}
 
@@ -333,6 +333,7 @@ section .link.highlight * {
 .main-container > section.place_detail {padding: 0;}
 .main-container > section.place_detail > h2 {font-size: 1.375em; color: #ff7e00; padding: 15px 0 23px 93px; border-bottom: 1px solid #b1b1b1;}
 .main-container > section.place_detail > .link {font-size: 2.125em; font-weight: bold; color: #000; text-decoration: none; display: block; padding: 16px 0 8px 93px; border-top: 1px solid #b1b1b1; position: relative;}
+.main-container > section.place_detail > .link > .overflow-ellipsis {display: block; margin-right: 40px;}
 .main-container > section.place_detail > .link:first-child {border-top: none;}
 .main-container > section.place_detail > .link > span {display: block; position: relative;}
 .main-container > section.place_detail > .link > span > i {display: block; width: 60px; height: 60px; position: absolute; left: -82px; top: 0; background-position: -180px -644px;}
@@ -581,8 +582,8 @@ section .link.highlight * {
     .main-container > section.movie_detail > .info > section > .about time > i {background-position: -26px -30px; width: 13px; height: 13px; top: -1px;}
     .main-container > section.movie_detail > .info > section > .about .block {margin-bottom: 4px;}
     .main-container > section.movie_detail > .about {padding: 15px 22px 11px;}
-    /*.main-container > section.movie_detail > .about > .preview {font-size: .75em; line-height: 1.2em;}*/
-    .main-container > section.movie_detail > .about > .padding {padding-bottom: 7px;}
+    .main-container > section.movie_detail > .about > .preview {font-size: .75em; line-height: 1.2em; max-height: 3.6em; padding: 0; overflow: hidden;}
+    .main-container > section.movie_detail > .about > .padding {margin-bottom: 7px;}
     .main-container > section.movie_detail > .about > .link {font-size: .6725em; width: 110px; right: 10px; bottom: 4px;}
     .main-container > section.movie_detail > .about > .link > i {background-position: -18px -30px; width: 9px; height: 14px; top: -2px;}
 
@@ -653,6 +654,7 @@ section .link.highlight * {
 
     .main-container > section.place_detail > h2 {font-size: .6875em; padding: 8px 0 12px 47px;}
     .main-container > section.place_detail > .link {font-size: 1.0625em; padding: 8px 0 4px 57px;}
+    .main-container > section.place_detail > .link > .overflow-ellipsis {margin-right: 20px;}
     .main-container > section.place_detail > .link > span > i {width: 30px; height: 30px; left: -41px; background-position: -90px -322px;}
     .main-container > section.place_detail > .link > span.i1 > i {background-position: 0 -322px;}
     .main-container > section.place_detail > .link > span.i2 > i {background-position: -30px -322px;}

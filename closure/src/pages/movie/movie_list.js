@@ -76,6 +76,8 @@ goog.scope(function() {
         if (eventList) {
             var timezone = eventList.subdivision.tz;
             var showIndex = kassy.rpc.index(eventList.shows);
+            var hallIndex = kassy.rpc.index(eventList.halls);
+            var buildingIndex = kassy.rpc.index(eventList.buildings);
 
             if (this.useShowTypeTitle_) {
                 var showType = eventList.showTypes[0];
@@ -86,10 +88,17 @@ goog.scope(function() {
 
             // фильтруем и добавляем show
             for (var i = 0; i < eventList.events.length; i++) {
+                /** @type {kassy.data.EventModel} */
                 var event = eventList.events[i];
+
                 if (event.state > 0) {
                     var show = showIndex[event.showId];
-                    if (show) {
+                    var hall = /** @type {kassy.data.HallModel} */ (hallIndex[event.hallId]);
+                    var building = buildingIndex[hall.buildingId];
+
+                    if (show && hall && building) {
+                        hall.building = building;
+                        event.hall = hall;
                         event.show = show;
                         event.date = kassy.utils.moment(event.dateTime, timezone, 'D MMMM, dddd');
                         event.time = kassy.utils.moment(event.dateTime, timezone, 'HH:mm');
@@ -124,10 +133,8 @@ goog.scope(function() {
                 days.push(lastDay = { date: event.date, events: [] });
                 eventDistinct = {};
             }
-            if (!eventDistinct[event.showId]) {
-                eventDistinct[event.showId] = true;
-                lastDay.events.push(event);
-            }
+
+            lastDay.events.push(event);
         });
 
         this.searchField_.setContentText(kassy.views.movie.List({
@@ -138,6 +145,16 @@ goog.scope(function() {
         this.setLoadingVisible(false);
 
         window.console.log('SHOW TIME: ' + (Date.now() - timePoint));
+    };
+
+    /**
+     * @param {Array.<{date:string, events:kassy.data.EventModel}>} days
+     * @private
+     */
+    MovieList.prototype.render_ = function(days) {
+        this.searchField_.setContentText(kassy.views.movie.List({
+            days: days
+        }));
     };
 
     MovieList.prototype.onSearch_ = function(e) {

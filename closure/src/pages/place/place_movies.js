@@ -24,93 +24,77 @@ goog.scope(function() {
 
     /** @override */
     PlaceMovies.prototype.handle_ = function(path) {
-        this.setContentTitle('Описание места');
-
         var buildingId = parseInt(path.params, 10);
 
-        this.loadAndShow_(buildingId);
+        this.setContentTitle('Описание места');
+
+        this.getEventList_({ buildingId: buildingId });
+    };
+
+    PlaceMovies.prototype.getEventList_ = function(options) {
+        var barrier = this.barrier_ = new goog.async.Deferred();
+        barrier.addCallback(this.gotEventList_, this);
+
+        options.response = barrier.callback.bind(barrier);
+
+        this.executeRPC(new kassy.rpc.GetEventList(options));
     };
 
     /**
-     * @param {number} buildingId
+     * @param {kassy.rpc.EventListType} eventList
      */
-    PlaceMovies.prototype.loadAndShow_ = function(buildingId) {
-        var Def = goog.async.Deferred;
-        var defs = [new Def(), new Def(), new Def(), new Def(), new Def()];
+    PlaceMovies.prototype.gotEventList_ = function(eventList) {
+        var events = [];
+        var place = eventList.buildings[0];
 
-        var data = this.data_;
-        data.findEvents(null, null, function(events, eventIndex) { defs[0].callback(events); });
-        // После получения списка событий, запрашиваем индекс только необходимых(!) зрелищь
-        defs[0].addCallback(function(events) {
-            var showIds = goog.array.map(events, function(event) { return event.showId; });
-            data.findShows(showIds, function(shows, showIndex) { defs[1].callback(showIndex); });
-        });
-        data.findHall(buildingId, function(halls, hallIndex) { defs[2].callback(hallIndex); });
-        data.findBuilding(null, function(buildings, buildingIndex) { defs[3].callback(buildingIndex); });
-        data.findShowType(function(showTypes, showTypeIndex) { defs[4].callback(showTypeIndex); });
+        if (eventList) {
+            var timezone = eventList.subdivision.tz;
+            var showTypeIndex = kassy.rpc.index(eventList.showTypes);
+            var showIndex = kassy.rpc.index(eventList.shows);
+            var hallIndex = kassy.rpc.index(eventList.halls);
 
-        var barrier = new goog.async.DeferredList(defs);
-        barrier.addCallback(function(results) {
-            var events = results[0][1];
-            var showIndex = results[1][1];
-            var hallIndex = results[2][1];
-            var buildingIndex = results[3][1];
-            var showTypeIndex = results[4][1];
-
-            var place = buildingIndex[buildingId];
-            if (place instanceof kassy.data.BuildingModel) {
-                // Выбираем события, проходящие в этом учреждении
-                var placeEvents = [];
-                goog.array.forEach(events, function(event) {
-                    if (event.state >= 0) {
-                        var hall = hallIndex[event.hallId];
-                        if (hall instanceof kassy.data.HallModel) {
-                            var show = showIndex[event.showId];
-                            if (show instanceof kassy.data.ShowModel) {
-                                var showType = showTypeIndex[show.typeId];
-                                var placeEvent = /** @type {kassy.data.EventModel} */ (goog.object.clone(event));
-                                placeEvent.show = /** @type {kassy.data.ShowModel} */ (goog.object.clone(show));
-                                placeEvent.show.type = showType;
-                                placeEvents.push(placeEvent);
-                            }
-                        }
+            // фильтруем и добавляем show
+            for (var i = 0; i < eventList.events.length; i++) {
+                var event = eventList.events[i];
+                if (event.state > 0) {
+                    var show = showIndex[event.showId];
+                    var hall = hallIndex[event.hallId];
+                    if (show && hall) {
+                        show.type = showTypeIndex[show.typeId];
+                        event.show = show;
+                        event.hall = hall;
+                        event.date = kassy.utils.moment(event.dateTime, timezone, 'D MMMM, dddd');
+                        event.time = kassy.utils.moment(event.dateTime, timezone, 'HH:mm');
+                        events.push(event);
                     }
-                });
-
-                // Группируем события по дате
-                var dateFormat = kassy.utils.groupDateFormat;
-                var days = [];
-                var lastDay = null;
-                var currGroupVal = -1;
-                var lastShowId = -1;
-                var lastEvent = null;
-                goog.array.forEach(placeEvents, function(event) {
-                    var groupVal = Math.floor(event.dateTime / 86400);
-
-                    if (groupVal != currGroupVal) {
-                        currGroupVal = groupVal;
-                        lastShowId = -1;
-                        days.push(lastDay = {date: dateFormat(event.dateTime), dateRaw: event.dateTime, events: []});
-                    }
-
-                    if (event.showId != lastShowId) {
-                        lastShowId = event.showId;
-                        event.times = [];
-                        lastDay.events.push(lastEvent = event);
-                    }
-
-                    lastEvent.times.push(event.timeHHMM);
-                });
-                this.show_(place, days);
+                }
             }
-        }, this);
+        }
+
+        this.show_(place, events);
     };
 
     /**
      * @param {kassy.data.BuildingModel} place
-     * @param {Array.<{date:string, events:Array.<kassy.data.EventModel>}>} days
+     * @param {Array.<kassy.data.EventModel>} events
      */
-    PlaceMovies.prototype.show_ = function(place, days) {
+    PlaceMovies.prototype.show_ = function(place, events) {
+        // Группируем события по дате
+        var days = [];
+        var lastDay = null;
+        var currGroupVal = -1;
+        var lastShowId = -1;
+        goog.array.forEach(events, function(event) {
+            var groupVal = event.date;
+            if (groupVal != currGroupVal) {
+                currGroupVal = groupVal;
+                lastShowId = -1;
+                days.push(lastDay = { date: event.date, dateRaw: event.dateTime, events: [] });
+            }
+
+            lastDay.events.push(event);
+        });
+
         this.setContentText(kassy.views.place.Movies({place: place, days: days}));
         this.setScroll();
     };

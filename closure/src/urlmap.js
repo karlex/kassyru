@@ -33,7 +33,6 @@ goog.require('kassy.handlers.PlaceMap');
 
 /* ORDER */
 goog.require('kassy.handlers.OrderDetails');
-goog.require('kassy.handlers.OrderFullDetails');
 goog.require('kassy.handlers.OrderSeat');
 goog.require('kassy.handlers.OrderConfirm');
 goog.require('kassy.handlers.OrderFinal');
@@ -72,7 +71,6 @@ kassy.urlMap = {
 
     /* ORDER */
     'order/details': kassy.handlers.OrderDetails,
-    'order/full_details': kassy.handlers.OrderFullDetails,
     'order/seat': kassy.handlers.OrderSeat,
     'order/confirm': kassy.handlers.OrderConfirm,
     'order/final': kassy.handlers.OrderFinal,

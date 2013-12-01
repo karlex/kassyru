@@ -36,11 +36,14 @@
         </div>
         <section class="movies_list">
             {foreach $event in $day.events}
-                <div class="link movie_item" href="#movie/places/{$event.show.id}">
+                <div class="link movie_item" href="#order/details/{$event.id}">
                     <h3>{$event.show.name}</h3>
                     <p>
                         {if $event.show.ageRestriction}{$event.show.ageRestriction}, {/if}
-                        {$event.time},
+                        {$event.hall.building.name}
+                        <br>
+                        {$event.hall.name}, {$event.time}
+                        <br>
                         {if $event.priceMin != $event.priceMax} {$event.priceMin} —{/if} {$event.priceMax} руб.
                     </p>
                     {if $event.isRecommend}
@@ -92,7 +95,7 @@
             <p>{$day.date}</p>
         </div>
         {foreach $event in $day.events}
-            <div class="link show_times" href="#order/details/{$show.id}/{$event.building.id}/{$day.dateRaw}">
+            <div class="link show_times" href="#order/details/{$event.id}">
                 <h3>{$event.building.name}</h3>
                 <ul class="cf">
                     {foreach $time in $event.times}

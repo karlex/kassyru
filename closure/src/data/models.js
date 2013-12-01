@@ -126,7 +126,7 @@ goog.inherits(kassy.data.SectionModel, kassy.data.Model);
  */
 kassy.data.PlaceModel = function(values) {
     goog.base(this, values);
-    //<place id="32531" section_id="1172" title_mretic_id="6" title="1" place_metric_id="7" place="1" x="14" y="0" _state="1"/>
+    //<place id="33314" event_id="6304608" section_id="47" title_metric_id="6" title="4" name_metric_id="7" name="6" x="84" y="42" color="FF0000" price="120.00" vacant="1" state="1"/>
 
     this.id = values['id'];
     this.sectionId = values['section_id'];
@@ -135,6 +135,7 @@ kassy.data.PlaceModel = function(values) {
     this.row = ~~values['title'];
     this.num = ~~values['name'];
     this.state = ~~values['state'];
+    this.vacant = ~~values['vacant']; // 1 - Доступно к продаже
 };
 goog.inherits(kassy.data.PlaceModel, kassy.data.Model);
 
@@ -156,6 +157,7 @@ kassy.data.EventModel = function(values) {
     this.isRecommend = ~~values['is_recommend'];
     this.priceMin = ~~values['price_min'];
     this.priceMax = ~~values['price_max'];
+    this.saleState = ~~values['sale_state'];
 
     this.timeHHMM = kassy.data.EventModel.getTimeHHMM(this.dateTime);
 };

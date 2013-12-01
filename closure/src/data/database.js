@@ -12,7 +12,7 @@ goog.scope(function() {
         var myOrderDef = new goog.async.Deferred();
         this.def_ = new goog.async.DeferredList([iGoDef, cacheDef, myOrderDef]);
 
-        this.execute_('CREATE TABLE IF NOT EXISTS i_go (showId, buildingId, date)',
+        this.execute_('CREATE TABLE IF NOT EXISTS i_go (eventId)',
             iGoDef.callback.bind(iGoDef), iGoDef.errback.bind(iGoDef));
 
         this.execute_('CREATE TABLE IF NOT EXISTS cache (token, expireDate, value, ind)',
