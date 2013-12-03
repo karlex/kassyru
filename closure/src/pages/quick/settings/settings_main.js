@@ -28,12 +28,18 @@ goog.scope(function() {
     };
 
     Settings.prototype.loadAndShow_ = function() {
-        this.barrier_ = new goog.async.Deferred();
-        this.barrier_.addCallback(this.show_, this);
+        var barrier = this.barrier_ = new goog.async.Deferred();
 
-        this.data_.findSubdivision(kassy.settings.getRegionId(), function(subdivisions) {
-            this.barrier_.callback(subdivisions[0]);
-        }.bind(this));
+        this.executeRPC(
+            new kassy.rpc.GetSubdivisions({
+                db: kassy.settings.getRegionId(),
+                response: barrier.callback.bind(barrier)
+            })
+        );
+
+        barrier.addCallback(function(subdivisionsInfo) {
+            this.show_(subdivisionsInfo ? subdivisionsInfo.subdivisions[0] : []);
+        }, this);
     };
 
     /**

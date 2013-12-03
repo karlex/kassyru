@@ -5,6 +5,7 @@
 goog.provide('kassy.handlers.PlaceTypes');
 
 goog.require('kassy.handlers.BaseHandler');
+goog.require('kassy.rpc.GetBuildingTypes');
 goog.require('kassy.views.place');
 
 goog.scope(function() {
@@ -28,24 +29,23 @@ goog.scope(function() {
         this.searchField_ = new kassy.ui.SearchField(this.getContentElement());
         this.handler.listen(this.searchField_, goog.events.EventType.CHANGE, this.onSearch_, false, this);
 
-        var defs = [new goog.async.Deferred(), new goog.async.Deferred()];
-        var barrier = this.barrier_ = new goog.async.DeferredList(defs);
+        var barrier = this.barrier_ = new goog.async.Deferred();
 
-        var data = this.data_;
-        data.findSubdivision(kassy.settings.getRegionId(), function(subdivisions) { defs[0].callback(subdivisions[0]); });
-        data.findBuildingTypes(function(types) { defs[1].callback(types); });
+        this.executeRPC(
+            new kassy.rpc.GetBuildingTypes({ response: barrier.callback.bind(barrier) })
+        );
 
-        barrier.addCallback(function(results) {
-            this.subdivision_ = results[0][1];
-            this.types_ = results[1][1];
-            this.showBuildingTypes_(this.types_);
+        barrier.addCallback(function(buildingTypeInfo) {
+            this.subdivision_ = buildingTypeInfo.subdivision;
+            this.types_ = buildingTypeInfo.buildingTypes;
+            this.show_(this.types_);
         }, this);
     };
 
     /**
      * @param {Array.<kassy.data.BuildingTypeModel>} buildingTypes
      */
-    PlaceTypes.prototype.showBuildingTypes_ = function(buildingTypes) {
+    PlaceTypes.prototype.show_ = function(buildingTypes) {
         goog.array.sort(buildingTypes, function(a, b) {
             var diff = a.order - b.order;
             return (diff !== 0 ? diff : a.other - b.other);
@@ -74,9 +74,9 @@ goog.scope(function() {
                 return goog.string.startsWith(type.name.toLowerCase(), search);
             }, e.search.toLowerCase());
 
-            this.showBuildingTypes_(goog.array.filter(types, filterFn));
+            this.show_(goog.array.filter(types, filterFn));
         } else {
-            this.showBuildingTypes_(types);
+            this.show_(types);
         }
     };
 

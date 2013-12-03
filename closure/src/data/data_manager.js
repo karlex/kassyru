@@ -106,7 +106,7 @@ kassy.data.DataManager.elementToModel = function(element, modelCtor) {
  * @param {boolean=} withoutCache
  */
 kassy.data.DataManager.prototype.find = function(modelName, keyField, params, response, withoutCache) {
-    //window.console.log('Get model "' + modelName + '"');
+    window.console.log('Get model "' + modelName + '"');
     var modelMeta = this.modelMap_[modelName];
     if (modelMeta && goog.isFunction(modelMeta.ctor)) {
         var token = kassy.settings.getRegionId() + '&' + modelName + '&' + goog.Uri.QueryData.createFromMap(params).toString();
@@ -125,7 +125,7 @@ kassy.data.DataManager.prototype.find = function(modelName, keyField, params, re
                 var models = [];
                 var index = {};
 
-                //window.console.log('FROM SERVER ' + modelName + ' COUNT: ' + elements.length);
+                window.console.log('FROM SERVER ' + modelName + ' COUNT: ' + elements.length);
 
                 // Урезаем список, чтобы непроизошло переполнение
                 elements = goog.array.splice(elements, 0, 6062);
@@ -158,10 +158,10 @@ kassy.data.DataManager.prototype.find = function(modelName, keyField, params, re
                 if (!withoutCache && modelsInfo.models.length > 0) {
                     this.cache_[token] = result;
                 }
-                //window.console.log('RESPONSE STATUS: OK');
+                window.console.log('RESPONSE STATUS: OK' + goog.debug.expose(modelsInfo));
                 response(modelsInfo.models, modelsInfo.index, true);
             } else {
-                //window.console.log('RESPONSE STATUS: ERROR');
+                window.console.log('RESPONSE STATUS: ERROR');
                 response([], {}, false);
             }
         }.bind(this));
@@ -207,10 +207,10 @@ kassy.data.DataManager.sendRequestV3 = function(options, success, error) {
     if (options.withoutCache) {
         //window.console.log('REQUEST ' + options.module + ' FROM SERVER');
         kassy.data.DataManager.sendXmlRequest_(requestValue, function(xml) {
-            //window.console.log('Request "' + options.module + '" is success');
+            window.console.log('Request "' + options.module + '" is success');
             success(xml);
         }, function(errorMsg) {
-            //window.console.log('Request "' + options.module + '" is fail');
+            window.console.log('Request "' + options.module + '" is fail');
             error(errorMsg);
         });
     }
@@ -220,7 +220,7 @@ kassy.data.DataManager.sendRequestV3 = function(options, success, error) {
             if (value === null) {
                 //window.console.log('REQUEST ' + options.module + ' FROM SERVER');
                 kassy.data.DataManager.sendXmlRequest_(requestValue, function(xml, responseText) {
-                    //window.console.log('Request "' + options.module + '" is success');
+                    window.console.log('Request "' + options.module + '" is success');
 
                     var resultCode = xml.getElementsByTagName('result')[0].getAttribute('code');
                     var hasErrors = xml.getElementsByTagName('errors').length > 0;
@@ -233,12 +233,12 @@ kassy.data.DataManager.sendRequestV3 = function(options, success, error) {
 
                     success(xml);
                 }, function(errorMsg) {
-                    //window.console.log('Request "' + options.module + '" is fail');
+                    window.console.log('Request "' + options.module + '" is fail');
                     error(errorMsg);
                 });
             }
             else {
-                //window.console.log('REQUEST ' + options.module + ' FROM DB CACHE');
+                window.console.log('REQUEST ' + options.module + ' FROM DB CACHE');
                 success(goog.dom.xml.loadXml(value));
             }
         });

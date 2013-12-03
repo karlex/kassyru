@@ -241,6 +241,7 @@ kassy.data.ShowTypeModel = function(values) {
 
     this.order = ~~values['order'];
     this.other = ~~values['other'];
+    this.state = ~~values['state'];
 
     var icon = values['icon'];
     if (goog.isDef(icon)) {

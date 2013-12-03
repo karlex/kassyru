@@ -1,6 +1,7 @@
 goog.provide('kassy.handlers.SettingsRegion');
 
 goog.require('kassy.handlers.BaseHandler');
+goog.require('kassy.rpc.GetSubdivisions');
 goog.require('kassy.views.settings');
 goog.require('goog.dom.xml');
 
@@ -24,12 +25,15 @@ goog.scope(function() {
     };
 
     SettingsRegion.prototype.loadAndShow_ = function() {
-        this.barrier_ = new goog.async.Deferred();
-        this.barrier_.addCallback(this.show_, this);
+        var barrier = this.barrier_ = new goog.async.Deferred();
 
-        this.data_.findSubdivisions(function(subdivisions) {
-            this.barrier_.callback(subdivisions);
-        }.bind(this));
+        this.executeRPC(
+            new kassy.rpc.GetSubdivisions({ response: barrier.callback.bind(barrier) })
+        );
+
+        barrier.addCallback(function(subdivisionsInfo) {
+            this.show_(subdivisionsInfo ? subdivisionsInfo.subdivisions : []);
+        }, this);
     };
 
     /**

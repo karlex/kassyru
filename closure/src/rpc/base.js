@@ -12,7 +12,7 @@ kassy.rpc.Response;
 /** @typedef {{ name:string, attrs:Object.<string, *>, childs:(Array.<kassy.rpc.OptionsDataItem>|undefined) }} */
 kassy.rpc.OptionsDataItem;
 
-/** @typedef {{ module:string, data:Array.<kassy.rpc.OptionsDataItem>, success:function(kassy.rpc.Response), error:function() }} */
+/** @typedef {{ withoutDb:(boolean|undefined), module:string, data:Array.<kassy.rpc.OptionsDataItem>, success:function(kassy.rpc.Response), error:function() }} */
 kassy.rpc.Options;
 
 /**
@@ -86,7 +86,7 @@ goog.scope(function() {
      */
     kassy.rpc.BaseCommand = function(options) {
         this.request_ = {
-            db: kassy.settings.getRegionId(),
+            db: (!options.withoutDb ? kassy.settings.getRegionId() : null),
             authId: kassy.settings.getAuthId(),
             authKey: kassy.settings.getAuthKey(),
             module: options.module,
@@ -107,9 +107,13 @@ goog.scope(function() {
     BaseCommand.prototype.getData = function() {
         var request = this.request_;
 
-        var xml =
-            '<?xml version="1.0" encoding="utf-8"?>' +
-            '<request db="' + request.db + '" module="' + request.module + '" protocol="xml" version="3.0">';
+        var xml = '<?xml version="1.0" encoding="utf-8"?><request';
+
+        if (request.db) {
+            xml += ' db="' + request.db + '"';
+        }
+
+        xml += ' module="' + request.module + '" protocol="xml" version="3.0">';
 
         for (var i = 0; i < request.data.length; i++) {
             xml += this.itemToXml_(request.data[i]);

@@ -5,6 +5,7 @@
 goog.provide('kassy.handlers.MovieTypes');
 
 goog.require('kassy.handlers.BaseHandler');
+goog.require('kassy.rpc.GetShowTypes');
 goog.require('kassy.views.movie');
 
 goog.scope(function() {
@@ -26,16 +27,15 @@ goog.scope(function() {
         this.searchField_ = new kassy.ui.SearchField(this.getContentElement());
         this.handler.listen(this.searchField_, goog.events.EventType.CHANGE, this.onSearch_, false, this);
 
-        var defs = [new goog.async.Deferred(), new goog.async.Deferred()];
-        var barrier = this.barrier_ = new goog.async.DeferredList(defs);
+        var barrier = this.barrier_ = new goog.async.Deferred();
 
-        var data = this.data_;
-        data.findSubdivision(kassy.settings.getRegionId(), function(subdivisions) { defs[0].callback(subdivisions[0]); });
-        data.findShowType(function(types) { defs[1].callback(types); });
+        this.executeRPC(
+            new kassy.rpc.GetShowTypes({ response: barrier.callback.bind(barrier) })
+        );
 
-        barrier.addCallback(function(results) {
-            this.subdivision_ = results[0][1];
-            this.types_ = results[1][1];
+        barrier.addCallback(function(showTypeInfo) {
+            this.subdivision_ = showTypeInfo.subdivision;
+            this.types_ = showTypeInfo.showTypes;
             this.show_(this.types_);
         }, this);
     };
@@ -53,6 +53,7 @@ goog.scope(function() {
             types: types,
             subdivision: this.subdivision_
         });
+
         this.searchField_.setContentText(view);
         this.setScroll();
         this.setLoadingVisible(false);
