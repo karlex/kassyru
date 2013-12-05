@@ -74,6 +74,8 @@ kassy.data.BuildingModel = function(values) {
     this.workhours = values['workhrs'];
     this.card = ~~values['is_pos'];
 
+    this.state = ~~values['state'];
+
     if (goog.string.trim(values['phone']).length > 0) {
         this.phones = goog.array.map(values['phone'].split(','), function(phone) { return '+7 ' + goog.string.trim(phone); });
     } else {

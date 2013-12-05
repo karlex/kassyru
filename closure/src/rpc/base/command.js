@@ -1,48 +1,15 @@
 goog.provide('kassy.rpc.BaseCommand');
 
-goog.require('goog.crypt');
-goog.require('goog.crypt.Sha1');
 goog.require('goog.json');
-
 goog.require('relief.rpc.Command');
 
-/** @typedef {{ get:function(Array.<kassy.data.Model>) }} */
-kassy.rpc.Response;
+goog.require('kassy.rpc.Response');
 
 /** @typedef {{ name:string, attrs:Object.<string, *>, childs:(Array.<kassy.rpc.OptionsDataItem>|undefined) }} */
 kassy.rpc.OptionsDataItem;
 
 /** @typedef {{ withoutDb:(boolean|undefined), module:string, data:Array.<kassy.rpc.OptionsDataItem>, success:function(kassy.rpc.Response), error:function() }} */
 kassy.rpc.Options;
-
-/**
- * @param {HTMLDocument} xml
- * @param {string} entityName
- * @param {function(new:kassy.data.Model, Object)} [opt_modelCtor]
- * @returns {Array.<kassy.data.Model>}
- */
-kassy.rpc.getModelsFromXml = function(xml, entityName, opt_modelCtor) {
-    var models = [];
-    var elements = xml.getElementsByTagName(entityName);
-
-    for (var i = 0; i < elements.length; i++) {
-        var values = {};
-        var element = elements[i];
-
-        for (var j = 0; j < element.attributes.length; j++) {
-            var attribute = element.attributes[j];
-            values[attribute.name] = attribute.value;
-        }
-
-        if (goog.isFunction(opt_modelCtor)) {
-            models.push(new opt_modelCtor(values));
-        } else {
-            models.push(values);
-        }
-    }
-
-    return models;
-};
 
 /**
  * @param {Array.<kassy.data.Model>} models
@@ -136,9 +103,7 @@ goog.scope(function() {
      */
     BaseCommand.prototype.onSuccess = function(event) {
         var xml = event.target.getResponseXml(),
-            response = {
-                get: goog.partial(kassy.rpc.getModelsFromXml, xml)
-            },
+            response = new kassy.rpc.Response(xml),
             result = response.get('result')[0],
             resultCode = (result && goog.isDef(result['code']) ? ~~result['code'] : 0);
 

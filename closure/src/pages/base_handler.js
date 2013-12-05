@@ -13,6 +13,12 @@ goog.require('relief.nav.Handler');
  */
 kassy.handlers.BaseHandler = function(sp) {
     /**
+     * @type {goog.async.Deferred}
+     * @protected
+     */
+    this.barrier_ = null;
+
+    /**
      * @type {kassy.ServiceProvider}
      * @protected
      */
@@ -145,6 +151,10 @@ kassy.handlers.BaseHandler.prototype.dispose = function() {
         this.handler.dispose();
     }
 
+    if (this.barrier_) {
+        this.barrier_.cancel(true);
+    }
+
     if (this.scroll_) {
         this.scroll_.dispose();
         this.scroll_ = null;
@@ -152,7 +162,7 @@ kassy.handlers.BaseHandler.prototype.dispose = function() {
 
     this.setContentStyle('');
 
-    this.sp_ = this.data_ = this.content_ = this.handler = this.scroll_ = null;
+    this.barrier_ = this.sp_ = this.data_ = this.content_ = this.handler = this.scroll_ = null;
 };
 
 

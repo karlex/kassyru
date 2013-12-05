@@ -372,9 +372,9 @@ section .link.highlight * {
 
 .addresses {padding: 0;}
 .addresses > .addresses-item {display: block; padding: 0; text-decoration: none;}
-.addresses > .addresses-item {padding: 12px 32px 8px; border-bottom: 1px solid #b1b1b1; position: relative;}
+.addresses > .addresses-item {padding: 12px 60px 8px 0; border-bottom: 1px solid #b1b1b1; position: relative;}
 .addresses > .addresses-item > address {font-size: 1.5em; font-style: normal; color: #63caed;}
-.addresses > .addresses-item > p {font-size: 1.5em; color: #85738e; position: absolute; right: 63px; top: 22px;}
+.addresses > .addresses-item > p {font-size: 1.5em; color: #85738e; position: absolute; right: 0; top: 12px;}
 
 .times {background-color: #faf8f9; position: relative;}
 .times > .btn_group {width: 434px; margin: 0 auto; padding-top: 11px;}
@@ -677,9 +677,9 @@ section .link.highlight * {
     .my_orders > article > .link {font-size: .6875em; background-position: -140px -403px; text-shadow: 0 1px 0 #bfbfbf; width: 85px; height: 23px; padding-top: 8px; top: 60px;}
     .rgba .my_orders > article > .link {text-shadow: 0 1px 0 rgba(255,255,255,.75);}
 
-    .addresses > .addresses-item {padding: 6px 16px 4px;}
+    .addresses > .addresses-item {padding: 6px 30px 4px 0;}
     .addresses > .addresses-item > address {font-size: .75em;}
-    .addresses > .addresses-item > p {font-size: .75em; right: 16px; top: 11px;}
+    .addresses > .addresses-item > p {font-size: .75em; right: 0; top: 6px;}
 
     .main-container > .show_times {padding: 3px 22px 6px;}
     .main-container > .show_times > h3 {font-size: .875em; margin-bottom: 3px;}

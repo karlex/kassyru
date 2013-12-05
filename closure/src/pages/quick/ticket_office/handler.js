@@ -20,47 +20,36 @@ goog.scope(function() {
     TicketOffice.prototype.handle_ = function(path) {
         this.setContentTitle('Кассы');
 
-        this.loadAndShow_();
+        this.setContentTitle('Учреждения');
+
+        // кассы
+        this.getBuildingList_({ kind: 0 });
     };
 
-    TicketOffice.prototype.loadAndShow_ = function() {
-        var Def = goog.async.Deferred;
-        var defs = [new Def()];
+    TicketOffice.prototype.getBuildingList_ = function(options) {
+        var barrier = this.barrier_ = new goog.async.Deferred();
+        barrier.addCallback(this.gotBuildingList_, this);
 
-        this.data_.findBuildingTypes(function(buildingTypes) { defs[0].callback(buildingTypes); });
+        options.response = barrier.callback.bind(barrier);
 
-        this.barrier_ = new goog.async.DeferredList(defs);
-        this.barrier_.addCallback(function(results) {
-            var buildingTypes = results[0][1];
-            var ticketBuildingTypes = goog.array.filter(buildingTypes, function(buildingType) {
-                return buildingType.kind == 0;
-            });
-            this.loadBuildingsByTypeIds_(ticketBuildingTypes, this.show_.bind(this));
-        }, this);
+        this.executeRPC(new kassy.rpc.GetBuildingList(options));
     };
 
     /**
-     * @param {Array.<kassy.data.BuildingTypeModel>} types
-     * @param {function(Array.<kassy.data.BuildingModel>)} callback
-     * @private
+     * @param {kassy.rpc.BuildingListType} buildingList
      */
-    TicketOffice.prototype.loadBuildingsByTypeIds_ = function(types, callback) {
-        var defs = goog.array.map(types, function(type) {
-            var def = new goog.async.Deferred();
-            this.data_.findBuilding(type.id, function(buildings) {
-                def.callback(buildings);
-            });
-            return def;
-        }.bind(this));
+    TicketOffice.prototype.gotBuildingList_ = function(buildingList) {
+        var buildings = [];
 
-        this.barrier_ = new goog.async.DeferredList(defs);
-        this.barrier_.addCallback(function(results) {
-            var buildingLists = goog.array.map(results, function(result) {
-                return result[1]; // building list
+        if (buildingList) {
+            buildings = buildingList.buildings;
+
+            goog.array.forEach(buildings, function(building) {
+                building.name = building.name.replace('Касса: ', '');
             });
-            var buildings = goog.array.concat.apply(null, buildingLists);
-            callback(buildings);
-        })
+        }
+
+        this.show_(buildings);
     };
 
     /**
@@ -69,11 +58,7 @@ goog.scope(function() {
      */
     TicketOffice.prototype.show_ = function(buildings) {
         this.setContentText(kassy.views.ticketoffice.List({
-            buildings: goog.array.map(buildings, function(building) {
-                var bld = goog.object.clone(building);
-                bld.name = bld.name.replace('Касса: ', '');
-                return bld;
-            })
+            buildings: buildings
         }));
         this.setScroll();
 

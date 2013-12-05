@@ -55,7 +55,7 @@ goog.scope(function () {
                     shows: response.get('show', kassy.data.ShowModel),
                     buildings: response.get('building', kassy.data.BuildingModel),
                     halls: response.get('hall', kassy.data.HallModel),
-                    events: goog.array.filter(response.get('event', kassy.data.EventModel), function(event) {
+                    events: response.get('event', kassy.data.EventModel, function(event) {
                         return event.saleState === 1;
                     })
                 })

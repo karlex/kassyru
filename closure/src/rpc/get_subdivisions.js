@@ -26,7 +26,7 @@ goog.scope(function () {
             }),
             success: function(response) {
                 options.response({
-                    subdivisions: goog.array.filter(response.get('subdivision', kassy.data.SubdivisionModel), function(subdivision) {
+                    subdivisions: response.get('subdivision', kassy.data.SubdivisionModel, function(subdivision) {
                         return subdivision.state === 1;
                     })
                 })

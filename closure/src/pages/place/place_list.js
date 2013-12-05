@@ -7,6 +7,7 @@ goog.provide('kassy.handlers.PlaceList');
 goog.require('kassy.handlers.BaseHandler');
 goog.require('kassy.ui.SearchField');
 goog.require('kassy.views.place');
+goog.require('kassy.rpc.GetBuildingList');
 
 goog.require('goog.date.Date');
 goog.require('goog.date.Interval');
@@ -21,62 +22,68 @@ goog.scope(function() {
         goog.base(this, sp);
 
         /**
-         * @type {goog.async.Deferred}
-         * @private
-         */
-        this.barrier_ = null
-
-        /**
          * @type {Array.<kassy.data.BuildingModel>}
          * @private
          */
-        this.places_ = null;
+        this.buildings_ = null;
+
+        /**
+         * @type {boolean}
+         * @private
+         */
+        this.useBuildingTypeTitle_ = false;
     };
     goog.inherits(kassy.handlers.PlaceList, kassy.handlers.BaseHandler);
     var PlaceList = kassy.handlers.PlaceList;
 
     /** @override */
     PlaceList.prototype.handle_ = function(path) {
+        var buildingTypeId = parseInt(path.params, 10);
+
+        this.useBuildingTypeTitle_ = true;
+
         this.setContentTitle('Учреждения');
 
+        this.initSearch_();
+
+        this.getBuildingList_({ typeId: buildingTypeId });
+    };
+
+    PlaceList.prototype.initSearch_ = function() {
         this.searchField_ = new kassy.ui.SearchField(this.getContentElement());
         this.handler.listen(this.searchField_, goog.events.EventType.CHANGE, this.onSearch_, false, this);
+    };
 
-        var buildingTypeId = parseInt(path.params, 10);
-        var showTypeId = kassy.settings.getShowTypeIdByBuildingTypeId(buildingTypeId);
+    PlaceList.prototype.getBuildingList_ = function(options) {
+        var barrier = this.barrier_ = new goog.async.Deferred();
+        barrier.addCallback(this.gotBuildingList_, this);
 
-        this.loadAndShow_(buildingTypeId, showTypeId);
+        options.response = barrier.callback.bind(barrier);
+
+        this.executeRPC(new kassy.rpc.GetBuildingList(options));
     };
 
     /**
-     * @param {number} buildingTypeId
-     * @param {string?} showTypeId
+     * @param {kassy.rpc.BuildingListType} buildingList
      */
-    PlaceList.prototype.loadAndShow_ = function(buildingTypeId, showTypeId) {
-        var Def = goog.async.Deferred;
-        var defs = [new Def(), new Def(), new Def()];
+    PlaceList.prototype.gotBuildingList_ = function(buildingList) {
+        var buildings = [];
 
-        var data = this.data_;
-        data.findBuilding(buildingTypeId, function(buildings, buildingIndex) { defs[0].callback(buildings); });
-        data.findShowType(function(showTypes, showTypeIndex) { defs[1].callback(showTypeIndex); });
-        data.findBuildingTypes(function(buildingTypes, buildingTypeIndex) { defs[2].callback(buildingTypeIndex); });
+        if (buildingList) {
+            buildings = buildingList.buildings;
 
-        this.barrier_ = new goog.async.DeferredList(defs);
-        this.barrier_.addCallback(function(results) {
-            var buildings = results[0][1];
-            var showTypeIndex = results[1][1];
-            var buildingTypeIndex = results[2][1];
-
-            this.showType_ = showTypeIndex[showTypeId];
-            this.buildingType_ = buildingTypeIndex[buildingTypeId];
-
-            if (this.buildingType_ instanceof kassy.data.BuildingTypeModel) {
-                this.setContentTitle(this.buildingType_.name);
+            if (this.useBuildingTypeTitle_) {
+                var buildingType = buildingList.buildingTypes[0];
+                if (buildingType) {
+                    this.setContentTitle(buildingType.name);
+                }
             }
+        }
 
-            this.places_ = buildings;
-            this.show_(buildings);
-        }, this);
+        // запомним для поиска
+        this.buildings_ = buildings;
+
+        this.show_(buildings);
     };
 
     /**
@@ -84,16 +91,14 @@ goog.scope(function() {
      */
     PlaceList.prototype.show_ = function(buildings) {
         this.searchField_.setContentText(kassy.views.place.List({
-            places: buildings,
-            buildingType: this.buildingType_,
-            showType: this.showType_
+            places: buildings
         }));
         this.setScroll();
         this.setLoadingVisible(false);
     };
 
     PlaceList.prototype.onSearch_ = function(e) {
-        if (!this.places_) return;
+        if (!this.buildings_) return;
 
         if (e.search && e.search.length > 0) {
 
@@ -101,9 +106,9 @@ goog.scope(function() {
                 return goog.string.startsWith(place.name.toLowerCase(), search);
             }, e.search.toLowerCase());
 
-            this.show_(goog.array.filter(this.places_, filterFn));
+            this.show_(goog.array.filter(this.buildings_, filterFn));
         } else {
-            this.show_(this.places_);
+            this.show_(this.buildings_);
         }
     };
 

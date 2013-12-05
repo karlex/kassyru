@@ -24,7 +24,7 @@ goog.scope(function () {
             success: function(response) {
                 options.response({
                     subdivision: response.get('subdivision', kassy.data.SubdivisionModel)[0],
-                    buildingTypes: goog.array.filter(response.get('building_type', kassy.data.BuildingTypeModel), function(buildingType) {
+                    buildingTypes: response.get('building_type', kassy.data.BuildingTypeModel, function(buildingType) {
                         return buildingType.state === 1;
                     })
                 })

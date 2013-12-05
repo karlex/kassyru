@@ -1,9 +1,3 @@
-/**
- * @fileoverview
- *
- * A handler class for the home page.
- */
-
 goog.provide('kassy.handlers.PlaceMap');
 
 goog.require('kassy.ymaps.Map');
@@ -24,40 +18,50 @@ goog.scope(function() {
 
     /** @override */
     PlaceMap.prototype.handle_ = function(path) {
+
         this.setContentTitle('Карта');
 
-        var params = path.params.split('/'),
-            buildingIds = params;
+        var options = {};
 
-        this.loadAndShow_(buildingIds);
+        // кассы
+        if (path.params == 'ticket_office') {
+            options.kind = 0;
+        }
+        // ID учреждения
+        else {
+            options.id = ~~path.params;
+        }
+
+        this.getBuildingList_(options);
+    };
+
+    PlaceMap.prototype.getBuildingList_ = function(options) {
+        var barrier = this.barrier_ = new goog.async.Deferred();
+        barrier.addCallback(this.gotBuildingList_, this);
+
+        options.response = barrier.callback.bind(barrier);
+
+        this.executeRPC(new kassy.rpc.GetBuildingList(options));
     };
 
     /**
-     * @param {Array.<number>} buildingIds
+     * @param {kassy.rpc.BuildingListType} buildingList
      */
-    PlaceMap.prototype.loadAndShow_ = function(buildingIds) {
-        var defs = goog.array.map(buildingIds, function(buildingId) {
-            var def = new goog.async.Deferred();
-            this.data_.findBuildingById(~~buildingId, def.callback.bind(def));
+    PlaceMap.prototype.gotBuildingList_ = function(buildingList) {
+        var buildings = [];
 
-            return def;
-        }, this);
+        if (buildingList) {
+            buildings = buildingList.buildings;
 
-        this.barrier_ = new goog.async.DeferredList(defs);
-        this.barrier_.addCallback(function(results) {
-            // Одномерный список объектов
-            var buildings = goog.array.reduce(results, function(modelsAccum, result) {
-                var models = result[1];
+            if (this.useBuildingTypeTitle_) {
+                var buildingType = buildingList.buildingTypes[0];
+                if (buildingType) {
+                    this.setContentTitle(buildingType.name);
+                }
+            }
+        }
 
-                return goog.array.reduce(models, function(modelsAccum, model) {
-                    modelsAccum.push(model);
-                    return modelsAccum;
-                }, modelsAccum);
-
-            }, []);
-
-            this.show_(buildings);
-        }, this);
+        this.show_(buildings);
     };
 
     /**
@@ -118,7 +122,6 @@ goog.scope(function() {
         );
 
         goog.array.forEach(buildings, function(building) {
-            window.console.log('BUILDING COORDS: ' + building._lat + ' '+ building._lng);
             var coords = [building._lat, building._lng];
             var body = building.address + (building.phones.length > 0 ? '<br>' + building.phones[0] : '');
             var geoPoint = kassy.ymaps.buildGeoObjectPoint(coords, building.name, body, building.name);
