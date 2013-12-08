@@ -10,7 +10,7 @@
         </div>
         <section class="movies_list">
             {foreach $event in $day.events}
-                <div class="link movie_item list-item_removable" href="#order/details/{$event.id}" data-show-id="{$event.show.id}" data-building-id="{$event.building.id}" data-date="{$day.rawDate}">
+                <div class="link movie_item list-item_removable" href="#order/details/{$event.id}" data-event-id="{$event.id}">
                     <h3 class="overflow-ellipsis">{$event.show.name}</h3>
                     {if $event.order}
                         <p>Заказ №{$event.order.orderId}</p>

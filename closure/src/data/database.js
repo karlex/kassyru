@@ -8,15 +8,14 @@ goog.scope(function() {
         this.db_ = window['openDatabase']("kassy", "1.0", "Kassy.ru", 50 * 1024 * 1024); // 1Мб
 
         var iGoDef = new goog.async.Deferred();
-        var cacheDef = new goog.async.Deferred();
         var myOrderDef = new goog.async.Deferred();
-        this.def_ = new goog.async.DeferredList([iGoDef, cacheDef, myOrderDef]);
+        this.def_ = new goog.async.DeferredList([iGoDef, myOrderDef]);
 
         this.execute_('CREATE TABLE IF NOT EXISTS i_go (eventId)',
             iGoDef.callback.bind(iGoDef), iGoDef.errback.bind(iGoDef));
 
-        this.execute_('CREATE TABLE IF NOT EXISTS cache (token, expireDate, value, ind)',
-            cacheDef.callback.bind(cacheDef), cacheDef.errback.bind(cacheDef));
+        /*this.execute_('CREATE TABLE IF NOT EXISTS cache (token, expireDate, value, ind)',
+            cacheDef.callback.bind(cacheDef), cacheDef.errback.bind(cacheDef));*/
 
         this.execute_('CREATE TABLE IF NOT EXISTS my_order (order_id, data)',
             myOrderDef.callback.bind(myOrderDef), myOrderDef.errback.bind(myOrderDef));
@@ -48,7 +47,7 @@ goog.scope(function() {
 
             tx['executeSql'](sql, [], function(tx, results) {
 
-                //window.console.log('SQL OK: ' + sql.substr(0, 200));
+                window.console.log('SQL OK: ' + sql.substr(0, 200));
 
                 if (goog.isFunction(callback)) {
                     var resultsRows = results['rows'],
@@ -63,7 +62,7 @@ goog.scope(function() {
                 }
             }, function() {
 
-                //window.console.log('SQL FAIL: ' + sql.substr(0, 200));
+                window.console.log('SQL FAIL: ' + sql.substr(0, 200));
 
                 if (goog.isFunction(callback)) {
                     callback([]);
@@ -71,7 +70,7 @@ goog.scope(function() {
             });
         }, function() {
 
-            //window.console.log('SQL FAIL: ' + sql.substr(0, 200));
+            window.console.log('SQL FAIL: ' + sql.substr(0, 200));
 
             if (goog.isFunction(errback)) {
                 errback();

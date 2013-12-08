@@ -34,6 +34,7 @@ goog.scope(function() {
      */
     IGo.prototype.contain = function(item, callback) {
         this.db_.execute('SELECT * FROM i_go WHERE eventId=' + item.eventId, function(rows) {
+            window.console.log('IGo rows: ' + rows.length);
             callback(rows.length > 0);
         });
     };

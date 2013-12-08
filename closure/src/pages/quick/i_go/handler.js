@@ -34,52 +34,68 @@ goog.scope(function() {
 
     IGo.prototype.loadAndShow_ = function() {
         var Def = goog.async.Deferred;
-        var defs = [new Def(), new Def(), new Def(), new Def(), new Def(), new Def()];
+        var defs = [new Def(), new Def(), new Def()];
 
         this.iGo_.toArray(function(rows) {
-            goog.array.sort(rows, function(a, b) { return a.date - b.date; });
+            //goog.array.sort(rows, function(a, b) { return a.date - b.date; });
             defs[0].callback(rows);
         });
 
-        // После получения списка "Я пойду", запрашиваем список соответствующих событий
+        // После получения списка "Я пойду", запрашиваем список соответствующих событий и заказов
         defs[0].addCallback(function(iGoRows) {
             this.loadEvents_(iGoRows, function(events) { defs[1].callback(events); });
+            this.findOrders_(iGoRows, function(orderIndex) { defs[2].callback(orderIndex); })
         }, this);
-
-        // После получения списка событий, запрашиваем индекс только необходимых(!) зрелищь
-        defs[1].addCallback(function(events) {
-            var showIds = goog.array.map(events, function(event) { return event.showId; });
-            this.data_.findShows(showIds, function(shows, showIndex) { defs[2].callback(showIndex); });
-
-            var eventIds = goog.array.map(events, function(event) { return event.id; });
-            this.findOrders_(eventIds, function(orderIndex) { defs[5].callback(orderIndex); })
-        }, this);
-
-        this.data_.findHall(null, function(halls, hallIndex) { defs[3].callback(hallIndex); });
-        this.data_.findBuilding(null, function(buildings, buildingIndex) { defs[4].callback(buildingIndex); });
 
         this.barrier_ = new goog.async.DeferredList(defs);
         this.barrier_.addCallback(function(results) {
             var events = results[1][1],
-                showIndex = results[2][1],
-                hallIndex = results[3][1],
-                buildingIndex = results[4][1],
-                orderIndex = results[5][1];
+                orderIndex = results[2][1];
 
-            this.show_(events, showIndex, hallIndex, buildingIndex, orderIndex);
+            this.show_(events, orderIndex);
         }, this);
     };
 
-    IGo.prototype.findOrders_ = function(eventIds, callback) {
-        window.console.log('ORDER IDS: ' + goog.debug.expose(eventIds));
+    /**
+     * @param {Array.<kassy.rpc.EventHallType>} eventHalls
+     * @param {Object.<number, kassy.data.MyOrderItem>} orderIndex
+     * @private
+     */
+    IGo.prototype.show_ = function(eventHalls, orderIndex) {
+        var days = [];
+        var lastDay = null;
+        var currGroupVal = -1;
 
-        var defs = goog.array.map(eventIds, function(eventId) {
+        goog.array.forEach(eventHalls, function(eventHall) {
+            var groupVal = eventHall.event.date;
+
+            if (groupVal != currGroupVal) {
+                currGroupVal = groupVal;
+                days.push(lastDay = {date: eventHall.event.date, events: []});
+            }
+
+            var order = orderIndex[eventHall.event.id];
+            lastDay.events.push({id: eventHall.event.id, show: eventHall.show, building: eventHall.building, order: order});
+        });
+
+        this.setContentText(kassy.views.igo.List({ days: days }));
+        this.setScroll();
+
+        var removableEls = goog.dom.getElementsByClass('list-item_removable', this.getContentElement());
+        goog.array.forEach(removableEls, function(removableEl) {
+            kassy.ui.gesture.listenSwipe(this.handler, removableEl, this.onRemoveGesture_.bind(this));
+        }, this);
+    };
+
+    /**
+     * @param {Array.<kassy.data.IGoItem>} iGoRows
+     * @param {function(Object.<number, kassy.data.MyOrderItem>)} callback
+     * @private
+     */
+    IGo.prototype.findOrders_ = function(iGoRows, callback) {
+        var defs = goog.array.map(iGoRows, function(iGoRow) {
             var def = new goog.async.Deferred();
-            this.orders_.findByEventId(eventId, function(orders) {
-                window.console.log('ORDERS: ' + goog.debug.expose(orders));
-                def.callback(orders);
-            });
-
+            this.orders_.findByEventId(iGoRow.eventId, def.callback.bind(def));
             return def;
         }.bind(this));
 
@@ -95,28 +111,23 @@ goog.scope(function() {
                 return index;
             }, {});
 
-            window.console.log('ORDER INDEX: ' + goog.debug.expose(orderIndex));
-
             callback(orderIndex);
         }.bind(this));
     };
 
     /**
      * @param {Array.<kassy.data.IGoItem>} iGoRows
-     * @param {function(Array.<kassy.data.EventModel>)} callback
+     * @param {function(Array.<kassy.rpc.EventHallType>)} callback
      * @private
      */
     IGo.prototype.loadEvents_ = function(iGoRows, callback) {
         var defs = goog.array.map(iGoRows, function(iGoRow) {
             var def = new goog.async.Deferred();
 
-            var params = {
-                'show_id': iGoRow.showId,
-                'date_from': iGoRow.date * 86400,
-                'date_to': (iGoRow.date + 1) * 86400 - 1
-            };
-
-            this.data_.find('event', 'id', params, def.callback.bind(def));
+            this.executeRPC(new kassy.rpc.GetEventHall({
+                eventId: iGoRow.eventId,
+                response: def.callback.bind(def)
+            }));
 
             return def;
         }.bind(this));
@@ -125,53 +136,19 @@ goog.scope(function() {
         barrier.addCallback(function(results) {
 
             // Список непустых результатов
-            var nonemptyResults = goog.array.filter(results, function(result) { return result[1].length > 0; });
+            var nonemptyResults = goog.array.filter(results, function(result) { return result[1] !== null; });
 
-            // Одномерный список событий
             var events = goog.array.map(nonemptyResults, function(result) {
-                var events = result[1]; // Список событий для одного шоу за весь день
-                return events[0]; // Нам нужно только одно событие, разное время нам не важно
+                /** @type {kassy.rpc.EventHallType} */
+                var eventHall = result[1];
+                var timezone = eventHall.subdivision.tz;
+                eventHall.event.date = kassy.utils.moment(eventHall.event.dateTime, timezone, 'D MMMM, dddd');
+                eventHall.event.time = kassy.utils.moment(eventHall.event.dateTime, timezone, 'HH:mm');
+                return eventHall;
             });
 
             callback(events);
         });
-    };
-
-    IGo.prototype.show_ = function(events, showIndex, hallIndex, buildingIndex, orderIndex) {
-        var dateFormat = kassy.utils.groupDateFormat;
-
-        var days = [];
-        var lastDay = null;
-        var currGroupVal = -1;
-
-        goog.array.forEach(events, function(event) {
-            if (!event) return;
-
-            var groupVal = Math.floor(event.dateTime / 86400);
-
-            if (groupVal != currGroupVal) {
-                currGroupVal = groupVal;
-                days.push(lastDay = {date: dateFormat(event.dateTime), rawDate: event.dateTime, events: []});
-            }
-
-            var show = showIndex[event.showId];
-            var hall = hallIndex[event.hallId];
-            var order = orderIndex[event.id];
-            if (show && hall) {
-                var building = buildingIndex[hall.buildingId];
-                if (building) {
-                    lastDay.events.push({show: show, building: building, order: order});
-                }
-            }
-        });
-
-        this.setContentText(kassy.views.igo.List({ days: days }));
-        this.setScroll();
-
-        var removableEls = goog.dom.getElementsByClass('list-item_removable', this.getContentElement());
-        goog.array.forEach(removableEls, function(removableEl) {
-            kassy.ui.gesture.listenSwipe(this.handler, removableEl, this.onRemoveGesture_.bind(this));
-        }, this);
     };
 
     /**
@@ -200,11 +177,7 @@ goog.scope(function() {
         }.bind(this, lockerEl));
 
         this.handler.listen(removeBtnEl, goog.events.EventType.CLICK, function(removableEl, lockerEl, e) {
-            this.iGo_.remove({
-                showId: ~~removableEl.getAttribute('data-show-id'),
-                buildingId: ~~removableEl.getAttribute('data-building-id'),
-                date: ~~removableEl.getAttribute('data-date')
-            });
+            this.iGo_.remove({ eventId: ~~removableEl.getAttribute('data-event-id') });
             goog.dom.removeNode(removableEl);
             goog.dom.removeNode(lockerEl);
         }.bind(this, removableEl, lockerEl));

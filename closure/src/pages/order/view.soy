@@ -1,54 +1,48 @@
 {namespace kassy.views.order autoescape="false"}
 
 /**
- * @param show
- * @param posterUrl
- * @param date
- * @param dateRaw
- * @param building
- * @param hall
- * @param time
+ * @param event
  * @param full
  */
 {template .Details}
     <section class="movie_detail">
         <div class="info cf">
-            {if $posterUrl}
+            {if $event.posterUrl}
                 <aside>
-                    <img class="poster" src="{$posterUrl}">
+                    <img class="poster" src="{$event.posterUrl}">
                 </aside>
             {/if}
-            <section {if not $posterUrl}class="wide"{/if}>
-                <span class="block genre">{$show.ageRestriction}</span>
-                <h2 class="overflow-ellipsis">{$show.name}</h2>
+            <section {if not $event.posterUrl}class="wide"{/if}>
+                <span class="block genre">{$event.show.ageRestriction}</span>
+                <h2 class="overflow-ellipsis">{$event.show.name}</h2>
                 <p class="about">
-                    {if $show.durationHHMM}
+                    {if $event.show.durationHHMM}
                         <span class="block">
-                            <time><!--i class="s_i"></i-->Продолжительность: {$show.durationHHMM}</time>
+                            <time><!--i class="s_i"></i-->Продолжительность: {$event.show.durationHHMM}</time>
                         </span>
                     {/if}
-                    {if $show.price > 0}
-                        <span class="block">Цена билета: {$show.price} руб.</span>
+                    {if $event.show.price > 0}
+                        <span class="block">Цена билета: {$event.show.price} руб.</span>
                     {/if}
                 </p>
             </section>
         </div>
-        {if $show.description}
+        {if $event.show.description}
             <div class="about">
-                <div class="preview padding">{$show.description}</div>
+                <div class="preview padding">{$event.show.description}</div>
             </div>
         {/if}
     </section>
     {if not $full}
         <div class="today_date_one">
-            <p>{$date}</p>
+            <p>{$event.date}</p>
         </div>
         <section class="show_times">
-            <h3>{$building.name}</h3>
+            <h3>{$event.building.name}</h3>
 
             <ul class="cf">
-                <li>{$hall.name}:</li>
-                <li>{$time}</li>
+                <li>{$event.hall.name}:</li>
+                <li>{$event.time}</li>
             </ul>
 
             <p class="all_dates">
@@ -63,20 +57,18 @@
         </div>
     </div>
     <div class="big_button">
-        <div class="link green s_i" href="#order/seat/{$show.id}/{$building.id}/{$dateRaw}">Заказать билеты</div>
+        <div class="link green s_i" href="#order/seat/{$event.id}">Заказать билеты</div>
     </div>
 {/template}
 
 /**
- * @param events
+ * @param event
  */
 {template .Seat}
     <section class="times cf">
         <div class="btn_group cf">
             <h2>Сеанс:</h2>
-            {foreach $event in $events}
-                <button class="btn-time {if isFirst($event)}active {/if}s_i" data-event-id="{$event.id}">{$event.timeHHMM}</button>
-            {/foreach}
+            <button class="btn-time active s_i" data-event-id="{$event.id}">{$event.time}</button>
         </div>
         <button class="del"><i class="s_i"></i></button>
     </section>

@@ -132,12 +132,18 @@ kassy.data.PlaceModel = function(values) {
 
     this.id = values['id'];
     this.sectionId = values['section_id'];
+
     this.x = ~~values['x'];
     this.y = ~~values['y'];
+
     this.row = ~~values['title'];
     this.num = ~~values['name'];
-    this.state = ~~values['state'];
+
+    this.price = values['price'];
+    this.color = '#' + values['color'];
+
     this.vacant = ~~values['vacant']; // 1 - Доступно к продаже
+    this.state = ~~values['state'];
 };
 goog.inherits(kassy.data.PlaceModel, kassy.data.Model);
 

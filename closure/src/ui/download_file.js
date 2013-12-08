@@ -7,7 +7,7 @@ goog.provide('kassy.ui.downloadFile');
  */
 kassy.ui.downloadFile = function(url, callback, opt_cacheInMem) {
     var fail = function(error) {
-        window.console.log('FILE DOWNLOAD WAS FAILED: ' + goog.debug.expose(error));
+        window.console.log('FILE DOWNLOAD WAS FAILED: ' + error);
         callback(null);
     };
 

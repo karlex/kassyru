@@ -45,21 +45,18 @@ goog.scope(function() {
      * @param {kassy.rpc.EventHallType} eventHall
      */
     OrderDetails.prototype.gotEventHall_ = function(eventHall) {
-        if (eventHall) {
-            var timezone = eventHall.subdivision.tz;
-
-            if (eventHall.event.state > 0) {
-                var show = eventHall.show;
-                var hall = eventHall.hall;
-                if (show && hall) {
-                    var date = kassy.utils.moment(eventHall.event.dateTime, timezone, 'D MMMM, dddd');
-                    var time = kassy.utils.moment(eventHall.event.dateTime, timezone, 'HH:mm');
-                }
-            }
-
+        if (!eventHall) {
+            throw new Error('EventHall is NULL');
         }
 
-        //
+        var timezone = eventHall.subdivision.tz;
+        var event = eventHall.event;
+        event.date = kassy.utils.moment(eventHall.event.dateTime, timezone, 'D MMMM, dddd');
+        event.time = kassy.utils.moment(eventHall.event.dateTime, timezone, 'HH:mm');
+        event.show = eventHall.show;
+        event.hall = eventHall.hall;
+        event.building = eventHall.building;
+
         var fileDef = new goog.async.Deferred();
         var iGoDef = new goog.async.Deferred();
         var barrier = this.barrier_ = new goog.async.DeferredList([fileDef, iGoDef]);
@@ -69,31 +66,21 @@ goog.scope(function() {
 
         barrier.addCallback(function(results) {
             var imageFullPath = results[0][1];
-            var iGoChecked = results[0][2];
+            var iGoChecked = results[1][1];
 
-            this.show_(
-                {
-                    posterUrl: imageFullPath,
-                    show: eventHall.show,
-                    date: kassy.utils.moment(eventHall.event.dateTime, timezone, 'D MMMM, dddd'),
-                    time: kassy.utils.moment(eventHall.event.dateTime, timezone, 'HH:mm'),
-                    dateRaw: eventHall.event.dateTime,
-                    building: eventHall.building,
-                    hall: eventHall.hall,
-                    event: eventHall.event
-                },
-                iGoChecked
-            );
+            event.posterUrl = imageFullPath;
+
+            this.show_(event, iGoChecked);
         }, this);
     };
 
     /**
-     * @param {{ show: kassy.data.ShowModel, posterUrl: string, date: string, building: kassy.data.BuildingModel, event: kassy.data.EventModel}} order
+     * @param {kassy.data.EventModel} event
      * @param {boolean} iGoChecked
      * @private
      */
-    OrderDetails.prototype.show_ = function(order, iGoChecked) {
-        this.setContentText(kassy.views.order.Details(order));
+    OrderDetails.prototype.show_ = function(event, iGoChecked) {
+        this.setContentText(kassy.views.order.Details({ event: event }));
         this.setScroll();
 
         this.handler.listen(this.getContentElement(), goog.events.EventType.CLICK, function(e) {
@@ -135,7 +122,7 @@ goog.scope(function() {
 
             goog.dom.classes.enable(iGoEl, 'checked', checked);
 
-            this.setIGo_(order.event.id, checked);
+            this.setIGo_(event.id, checked);
         }, false, this);
     };
 
