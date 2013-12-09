@@ -94,8 +94,8 @@ body {
 
     width: 100%;
     height: 100%;
-    min-width: 320px;
-    max-width: 640px;
+    /*min-width: 320px;
+    max-width: 640px;*/
 
     overflow: hidden;
     background: #fff;
@@ -489,12 +489,19 @@ section .link.highlight * {
    Media Queries
    ========================================================================== */
 
+/* iPad */
 @media only screen and (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi) {
     .s_i {
 		background-image: url(../img/bg/s_i64.png) !important;
-		background-size: 320px 440px;
 	}
 	#splash {background-image: url(../img/bg/splash_screen_big.png) !important;}
+}
+
+/* Samsung Galaxy S4 */
+@media only screen and (-webkit-min-device-pixel-ratio: 3) {
+    .s_i {
+        background-size: 320px 440px !important;
+    }
 }
 
 @media only screen and (min-width: 320px) and (max-width: 480px) {

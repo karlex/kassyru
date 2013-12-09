@@ -112,6 +112,7 @@ h2 {font-size: 2.125em; font-weight: bold; color: #000;}
 h3 {font-size: 2.25em; font-weight: normal; color: #3d3a3a;}
 button {font-size: 1.5em; font-weight: bold; color: #fff; background: none; padding: 0; border: none;}
 
+h1, h2, h3, h4, h5, h6,
 .overflow-ellipsis,
 .overflow-ellipsis * {
     text-overflow: ellipsis;
@@ -176,11 +177,11 @@ section .link.highlight * {
 .auth > .item > .label {font-size: 1.5em; color: #000; font-weight: bold; position: absolute; left: 24px; top: 30px;}
 .auth .variant_input,
 .auth .password_input,
-.auth .email_input {font-size: 1.5em; width: 50%; border: none; position: relative; left: 70px; top: 0; line-height: 3em; z-index: 50; outline: none; text-align:left; float:right; margin-right:100px;}
+.auth .email_input {font-size: 1.5em; border: none; position: absolute; left: 150px; right: 10px; top: 0; line-height: 3em; z-index: 50; outline: none; text-align:left; float:right;}
 .auth_comment {font-size: 1.5em; color: #a0a0a0;}
 .auth_alert {font-size: 1.5em; color: #ff0000;}
 
-.main-container > section.place > h2 {padding-right: 85px;}
+.main-container > section.place > h2 {/*padding-right: 85px;*/}
 .main-container > section.place > address {font-size: 1.5em; color: #3690bb; font-style: normal; margin-bottom: 23px; position: relative; top: 4px;}
 .main-container > section.place .on_map {color: #b2b1b1; text-decoration: none; position: absolute; right: 0; overflow: visible;}
 .main-container > section.place .on_map > i {background-position: -35px -61px; display: block; width: 18px; height: 27px; position: absolute; right: -20px; top: -2px;}
@@ -239,8 +240,8 @@ section .link.highlight * {
 .main-container > section.movie_detail > .info > section > .about time > i {background-position: -53px -61px; display: block; width: 25px; height: 24px; position: absolute; left: 0; top: -1px;}
 .main-container > section.movie_detail > .info > section > .about .country {font-size: 1.125em; color: #a4a4a4;}
 .main-container > section.movie_detail > .about {padding: 29px 44px 21px; position: relative;}
-.main-container > section.movie_detail > .about > .preview {font-size: 1.5em; color: #787878; line-height: 1.2em;}
-.main-container > section.movie_detail > .about > .padding {padding-bottom: 13px;}
+.main-container > section.movie_detail > .about > .preview {font-size: 1.5em; color: #787878; line-height: 2em; max-height: 6em; padding: 0; overflow: hidden;}
+.main-container > section.movie_detail > .about > .padding {margin-bottom: 13px;}
 .main-container > section.movie_detail > .about > .link {color: #107da5; text-decoration: none; width: 160px; position: absolute; right: 19px; bottom: 10px; overflow: visible;}
 .main-container > section.movie_detail > .about > .link > i {background-position: -35px -61px; display: block; width: 18px; height: 27px; position: absolute; right: 0; top: -2px;}
 
@@ -314,7 +315,7 @@ section .link.highlight * {
 
 .main-container section.interests {padding: 17px 0 26px;}
 .main-container section.interests.paddings {padding: 0;}
-.main-container section.interests > h2 {font-size: 1.375em; color: #ff7e00; padding: 15px 0 23px 93px; border-bottom: 1px solid #b1b1b1;}
+.main-container section.interests > h2 {font-size: 2.125em/*1.375em*/; color: #ff7e00; padding: 15px 0 23px 93px; border-bottom: 1px solid #b1b1b1;}
 .main-container section.interests > ul {font-size: 2.125em; font-weight: bold;}
 .main-container section.interests > ul > li {border-bottom: 1px solid #b1b1b1;}
 .main-container section.interests > ul > li > .link {color: #000; text-decoration: none; display: block; padding: 16px 0 13px 93px; position: relative;}
@@ -332,6 +333,7 @@ section .link.highlight * {
 .main-container > section.place_detail {padding: 0;}
 .main-container > section.place_detail > h2 {font-size: 1.375em; color: #ff7e00; padding: 15px 0 23px 93px; border-bottom: 1px solid #b1b1b1;}
 .main-container > section.place_detail > .link {font-size: 2.125em; font-weight: bold; color: #000; text-decoration: none; display: block; padding: 16px 0 8px 93px; border-top: 1px solid #b1b1b1; position: relative;}
+.main-container > section.place_detail > .link > .overflow-ellipsis {display: block; margin-right: 40px;}
 .main-container > section.place_detail > .link:first-child {border-top: none;}
 .main-container > section.place_detail > .link > span {display: block; position: relative;}
 .main-container > section.place_detail > .link > span > i {display: block; width: 60px; height: 60px; position: absolute; left: -82px; top: 0; background-position: -180px -644px;}
@@ -370,9 +372,9 @@ section .link.highlight * {
 
 .addresses {padding: 0;}
 .addresses > .addresses-item {display: block; padding: 0; text-decoration: none;}
-.addresses > .addresses-item {padding: 12px 32px 8px; border-bottom: 1px solid #b1b1b1; position: relative;}
+.addresses > .addresses-item {padding: 12px 60px 8px 0; border-bottom: 1px solid #b1b1b1; position: relative;}
 .addresses > .addresses-item > address {font-size: 1.5em; font-style: normal; color: #63caed;}
-.addresses > .addresses-item > p {font-size: 1.5em; color: #85738e; position: absolute; right: 63px; top: 22px;}
+.addresses > .addresses-item > p {font-size: 1.5em; color: #85738e; position: absolute; right: 0; top: 12px;}
 
 .times {background-color: #faf8f9; position: relative;}
 .times > .btn_group {width: 434px; margin: 0 auto; padding-top: 11px;}
@@ -442,8 +444,8 @@ section .link.highlight * {
 .search_field__rt {position: absolute; right: 0; top: 0; width: 88px; height: 100%; background-position: 100% -704px;}
 .search_field button {display: block; width: 28px; height: 30px; position: absolute; left: 27px; top: 31px;}
 .search_field button > i {background-position: -142px -110px; display: block; width: 28px; height: 30px;}
-.search_field label {font-size: 1.75em; color: #b4b3b4; position: absolute; left: 70px; top: 15px; line-height: 58px; z-index: 100;}
-.search_field input {font-size: 1.75em; color: #368fbb; position: absolute; left: 70px; top: 15px; right: 30px; line-height: 58px; background: transparent; z-index: 50; outline: none; border: none; }
+.search_field .label {font-size: 1.75em; color: #b4b3b4; position: absolute; left: 70px; top: 15px; line-height: 58px; z-index: 100;}
+.search_field input {font-size: 1.75em; color: #368fbb; position: absolute; left: 70px; top: 15px; right: 30px; line-height: 58px; background: transparent; z-index: 150; outline: none; border: none; }
 
 .main-container > .i_go {background: #f3f3f3; height: 88px; margin: 26px 40px 0; border: 1px solid #bbb; border-radius: 25px; position: relative;}
 .main-container > .i_go > .checkbox {width: 350px; position: absolute; left: 24px; top: 15px;}
@@ -528,11 +530,11 @@ section .link.highlight * {
     .auth > .item > .label {font-size: 0.8em; left: 12px; top: 15px;}
     .auth .variant_input,
     .auth .password_input,
-    .auth .email_input {font-size: 0.8em; left: 35px; top: 0; margin-right:50px;}
+    .auth .email_input {font-size: 0.8em; left: 75px; top: 0; right: 5px;}
     .auth_comment {font-size: 0.8em;}
     .auth_alert {font-size: 0.8em;}
 
-    .main-container > section.place > h2 {padding-right: 43px;}
+    .main-container > section.place > h2 {/*padding-right: 43px;*/}
     .main-container > section.place > address {font-size: .75em; margin-bottom: 12px; top: -1px;}
     .main-container > section.place .on_map {}
     .main-container > section.place .on_map > i {background-position: -18px -31px; width: 9px; height: 14px; right: -10px; top: -1px;}
@@ -580,8 +582,8 @@ section .link.highlight * {
     .main-container > section.movie_detail > .info > section > .about time > i {background-position: -26px -30px; width: 13px; height: 13px; top: -1px;}
     .main-container > section.movie_detail > .info > section > .about .block {margin-bottom: 4px;}
     .main-container > section.movie_detail > .about {padding: 15px 22px 11px;}
-    /*.main-container > section.movie_detail > .about > .preview {font-size: .75em; line-height: 1.2em;}*/
-    .main-container > section.movie_detail > .about > .padding {padding-bottom: 7px;}
+    .main-container > section.movie_detail > .about > .preview {font-size: .75em; line-height: 1.2em; max-height: 3.6em; padding: 0; overflow: hidden;}
+    .main-container > section.movie_detail > .about > .padding {margin-bottom: 7px;}
     .main-container > section.movie_detail > .about > .link {font-size: .6725em; width: 110px; right: 10px; bottom: 4px;}
     .main-container > section.movie_detail > .about > .link > i {background-position: -18px -30px; width: 9px; height: 14px; top: -2px;}
 
@@ -637,7 +639,7 @@ section .link.highlight * {
     .movies_list > .movie_item > .rating.five {background-position: -165px -44px;}
 
     .main-container section.interests {padding: 8px 0 13px;}
-    .main-container section.interests > h2 {font-size: .6875em; padding: 8px 0 12px 47px;}
+    .main-container section.interests > h2 {font-size: 1.0625em/*.6875em*/; padding: 8px 0 12px 47px;}
     .main-container section.interests > ul {font-size: 1.0625em; font-weight: bold;}
     .main-container section.interests > ul > li > .link {padding: 8px 0 7px 47px;}
     .main-container section.interests > ul > li > .link > span > i {width: 30px; height: 30px; left: -41px; top: -4px; background-position: -90px -322px;}
@@ -652,6 +654,7 @@ section .link.highlight * {
 
     .main-container > section.place_detail > h2 {font-size: .6875em; padding: 8px 0 12px 47px;}
     .main-container > section.place_detail > .link {font-size: 1.0625em; padding: 8px 0 4px 57px;}
+    .main-container > section.place_detail > .link > .overflow-ellipsis {margin-right: 20px;}
     .main-container > section.place_detail > .link > span > i {width: 30px; height: 30px; left: -41px; background-position: -90px -322px;}
     .main-container > section.place_detail > .link > span.i1 > i {background-position: 0 -322px;}
     .main-container > section.place_detail > .link > span.i2 > i {background-position: -30px -322px;}
@@ -674,9 +677,9 @@ section .link.highlight * {
     .my_orders > article > .link {font-size: .6875em; background-position: -140px -403px; text-shadow: 0 1px 0 #bfbfbf; width: 85px; height: 23px; padding-top: 8px; top: 60px;}
     .rgba .my_orders > article > .link {text-shadow: 0 1px 0 rgba(255,255,255,.75);}
 
-    .addresses > .addresses-item {padding: 6px 16px 4px;}
+    .addresses > .addresses-item {padding: 6px 30px 4px 0;}
     .addresses > .addresses-item > address {font-size: .75em;}
-    .addresses > .addresses-item > p {font-size: .75em; right: 16px; top: 11px;}
+    .addresses > .addresses-item > p {font-size: .75em; right: 0; top: 6px;}
 
     .main-container > .show_times {padding: 3px 22px 6px;}
     .main-container > .show_times > h3 {font-size: .875em; margin-bottom: 3px;}
@@ -742,7 +745,7 @@ section .link.highlight * {
     .search_field__rt {background-position: 100% -352px;}
     .search_field button {width: 14px; height: 15px; left: 14px; top: 15px;}
     .search_field button > i {background-position: -71px -55px; width: 14px; height: 15px;}
-    .search_field label {font-size: .875em; left: 35px; top: 8px; line-height: 28px;}
+    .search_field .label {font-size: .875em; left: 35px; top: 8px; line-height: 28px;}
     .search_field input {font-size: .875em; left: 35px; top: 8px; line-height: 28px; right: 15px; }
 
     .footer-container {background: url(../img/bg/footer32.png) repeat-x left top; height: 44px; position: relative;}
