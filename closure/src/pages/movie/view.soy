@@ -39,7 +39,9 @@
                 <div class="link movie_item" href="#order/details/{$event.id}">
                     <h3>{$event.show.name}</h3>
                     <p>
-                        {if $event.show.ageRestriction}{$event.show.ageRestriction}, {/if}
+                        {if $event.show.ageRestriction}
+                            <span class="age_restriction">{$event.show.ageRestriction}</span>
+                        {/if}
                         {$event.hall.building.name}
                         <br>
                         {$event.hall.name}, {$event.time}

@@ -54,6 +54,17 @@ kassy.ui.Scroll.prototype.refresh = function() {
 };
 
 /**
+ * @param {number} x
+ * @param {number} y
+ * @param {number} [time] in milliseconds
+ * @param {boolean} [relative] at current position
+ * @returns {*}
+ */
+kassy.ui.Scroll.prototype.scrollTo = function(x, y, time, relative) {
+    return this.scroll_['scrollTo'](x, y, time, relative);
+};
+
+/**
  * Удаляет себя и связи, в том числе вызывает iScroll::destroy() для уничтожения внешнего объекта
  */
 kassy.ui.Scroll.prototype.dispose = function() {

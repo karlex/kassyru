@@ -31,13 +31,13 @@ goog.scope(function () {
             options.dateFrom = new goog.date.DateTime();
         }
 
-        if (!options.dateTo) {
+        /*if (!options.dateTo) {
             options.dateTo = options.dateFrom.clone();
-            options.dateTo.add(new goog.date.Interval(goog.date.Interval.DAYS, kassy.config.daysLimit));
-        }
+            options.dateTo.add(new goog.date.Interval(goog.date.Interval.MONTHS, 6));
+        }*/
 
         var unixDateTimeFrom = Math.round(options.dateFrom.getTime() / 1000);
-        var unixDateTimeTo = Math.round(options.dateTo.getTime() / 1000);
+        //var unixDateTimeTo = Math.round(options.dateTo.getTime() / 1000);
 
         goog.base(this, {
             module: 'page_event_list',
@@ -45,7 +45,7 @@ goog.scope(function () {
                 'building_id': options.buildingId,
                 'show_type_id': options.showTypeId,
                 'date_from': unixDateTimeFrom.toString(),
-                'date_to': unixDateTimeTo.toString(),
+                //'date_to': unixDateTimeTo.toString(),
                 'is_recommend': (goog.isDef(options.isRecommend) ? ~~options.isRecommend : undefined)
             }),
             success: function(response) {

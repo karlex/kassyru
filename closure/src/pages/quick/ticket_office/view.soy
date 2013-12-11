@@ -15,8 +15,12 @@
                 <address>
                     {if $building.workhours.length > 0}<div>{$building.workhours}</div>{/if}
                     {if $building.phones.length > 0}<div>{$building.phones.0}</div>{/if}
-                    {if $building.card == 1}<div style="width: 70px; height: 20px; background: url(./img/paycard.png) no-repeat;"></div>{/if}
                 </address>
+                {if $building.card == 1}
+                    <div class="paycard-holder">
+                        <div class="paycard"></div>
+                    </div>
+                {/if}
                 <p id="bld-dist-{$building.id}"></p>
             </div>
         {/foreach}

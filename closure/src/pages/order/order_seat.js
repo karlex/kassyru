@@ -94,6 +94,7 @@ goog.scope(function() {
         });
 
         var content = this.getContentElement(),
+            seatHolderEl = goog.dom.getElementByClass('seat-holder', content),
             canvas = goog.dom.getElementByClass('hall-canvas'),
             ctx = this.ctx_ = canvas.getContext('2d');
 
@@ -101,16 +102,29 @@ goog.scope(function() {
         canvas.width = hall.width + 4;
         canvas.height = hall.height + 4;
 
+        var canvasToHolderWidth = seatHolderEl.clientWidth - canvas.width,
+            canvasToHolderHeight = seatHolderEl.clientHeight - canvas.height;
+
+        if (canvasToHolderWidth > 0) {
+            canvas.width = seatHolderEl.clientWidth;
+        }
+
+        if (canvasToHolderHeight > 0) {
+            canvas.height = seatHolderEl.clientHeight;
+        }
+
+        var translateX = 2 + (canvasToHolderWidth > 0 ? canvasToHolderWidth / 2 : 0),
+            translateY = 2 + (canvasToHolderHeight > 0 ? canvasToHolderHeight / 2 : 0);
+
         // init graphics context
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.translate(2, 2);
+        ctx.fillStyle = 'grey';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.translate(translateX, translateY);
 
         // draw places
         this.drawPlaces_(ctx, places);
 
         this.zoomed_ = false;
-
-        var seatHolderEl = goog.dom.getElementByClass('seat-holder', content);
 
         this.seatScroll_ = new kassy.ui.Scroll(seatHolderEl, {
             'doubleTapZoom': placeZoom,
@@ -121,18 +135,22 @@ goog.scope(function() {
             /*'onTouchEnd': function(e) { if (!this['moved']) onSeatClick(e); }*/
         });
 
-        this.handler.listen(seatHolderEl, [goog.events.EventType.CLICK], this.onSeatClick_, false, this);
+        var scrollX = (canvasToHolderWidth < 0 ? canvasToHolderWidth / 2 : 0),
+            scrollY = (canvasToHolderHeight < 0 ? canvasToHolderHeight / 2 : 0);
+        this.seatScroll_.scrollTo(scrollX, scrollY);
+
+        this.handler.listen(seatHolderEl, [goog.events.EventType.CLICK], goog.partial(this.onSeatClick_, translateX, translateY), false, this);
 
         this.refreshConfirmLink_();
 
         this.setLoadingVisible(false);
     };
 
-    OrderSeat.prototype.onSeatClick_ = function(e) {
+    OrderSeat.prototype.onSeatClick_ = function(translateX, translateY, e) {
         var sender = e.target;
         if (goog.dom.classes.has(sender, 'hall-canvas')) {
             if (this.zoomed_) {
-                var coord = new goog.math.Coordinate(e.offsetX, e.offsetY);
+                var coord = new goog.math.Coordinate(e.offsetX - translateX, e.offsetY - translateY);
                 var place = goog.array.find(this.places_, function(place) {
                     return place.rect.contains(coord);
                 });

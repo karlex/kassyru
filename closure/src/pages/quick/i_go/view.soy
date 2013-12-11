@@ -15,7 +15,11 @@
                     {if $event.order}
                         <p>Заказ №{$event.order.orderId}</p>
                     {/if}
-                    <p>{$event.show.ageRestriction}&nbsp;</p>
+                    <p>
+                        {if $event.show.ageRestriction}
+                            <span class="age_restriction">{$event.show.ageRestriction}</span>
+                        {/if}
+                    </p>
                     {if $event.show.awesome}
                         <div class="awesome s_i"></div>
                     {/if}

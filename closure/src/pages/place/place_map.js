@@ -79,7 +79,9 @@ goog.scope(function() {
                     this.showMap_(buildings, [geolocation['latitude'], geolocation['longitude']])
                 }.bind(this);
 
-                if (kassy.settings.getUseGPS()) {
+                showMapWithoutGps();
+
+                /*if (kassy.settings.getUseGPS()) {
                     navigator['geolocation']['getCurrentPosition'](
                         function(position) {
                             this.showMap_(buildings, [position['coords']['latitude'], position['coords']['longitude']])
@@ -92,7 +94,7 @@ goog.scope(function() {
                 }
                 else {
                     showMapWithoutGps();
-                }
+                }*/
             }
             else {
                 var coords = [buildings[0]._lat, buildings[0]._lng];

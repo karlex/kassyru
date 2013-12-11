@@ -177,7 +177,7 @@ section .link.highlight * {
 .auth > .item > .label {font-size: 1.5em; color: #000; font-weight: bold; position: absolute; left: 24px; top: 30px;}
 .auth .variant_input,
 .auth .password_input,
-.auth .email_input {font-size: 1.5em; border: none; position: absolute; left: 150px; right: 10px; top: 0; line-height: 3em; z-index: 50; outline: none; text-align:left; float:right;}
+.auth .email_input {font-size: 1.5em; border: none; position: absolute; left: 150px; right: 10px; top: 0; line-height: 88px/*3em*/; z-index: 50; outline: none; text-align:left; float:right;}
 .auth_comment {font-size: 1.5em; color: #a0a0a0;}
 .auth_alert {font-size: 1.5em; color: #ff0000;}
 
@@ -302,7 +302,8 @@ section .link.highlight * {
 .movies_list > .movie_item {display:block; text-decoration: none; padding: 9px 30px; border-bottom: 1px solid #b1b1b1; position: relative;}
 .movies_list > .movie_item > h3 {font-size: 2.125em; font-weight: bold;}
 .movies_list > .movie_item > h3.no_bold {font-weight: normal !important;}
-.movies_list > .movie_item > p {font-size: 1.5em; color: #63caed;}
+.movies_list > .movie_item > p {position: relative; font-size: 1.5em; color: #63caed;}
+.movies_list > .movie_item > p > .age_restriction {position: absolute; right:0; top:0;}
 .movies_list > .movie_item > p > .address {font-size: 1em;}
 .movies_list > .movie_item > p > .num {font-size: 1em;}
 .movies_list > .movie_item > .awesome {background-position: -196px 0; width: 47px; height: 44px; position: absolute; left: 0; top: 0;}
@@ -373,7 +374,9 @@ section .link.highlight * {
 .addresses {padding: 0;}
 .addresses > .addresses-item {display: block; padding: 0; text-decoration: none;}
 .addresses > .addresses-item {padding: 12px 60px 8px 0; border-bottom: 1px solid #b1b1b1; position: relative;}
-.addresses > .addresses-item > address {font-size: 1.5em; font-style: normal; color: #63caed;}
+.addresses > .addresses-item > address {position: relative; font-size: 1.5em; font-style: normal; color: #63caed; overflow: hidden;}
+.addresses > .addresses-item > .paycard-holder {height: 20px;}
+.addresses > .addresses-item > .paycard-holder > .paycard {position: absolute; right:0; width: 70px; height: 20px; background: url(../img/paycard.png) no-repeat;}
 .addresses > .addresses-item > p {font-size: 1.5em; color: #85738e; position: absolute; right: 0; top: 12px;}
 
 .times {background-color: #faf8f9; position: relative;}
@@ -537,7 +540,7 @@ section .link.highlight * {
     .auth > .item > .label {font-size: 0.8em; left: 12px; top: 15px;}
     .auth .variant_input,
     .auth .password_input,
-    .auth .email_input {font-size: 0.8em; left: 75px; top: 0; right: 5px;}
+    .auth .email_input {font-size: 0.8em; left: 75px; top: 0; right: 5px; line-height: 44px;}
     .auth_comment {font-size: 0.8em;}
     .auth_alert {font-size: 0.8em;}
 
