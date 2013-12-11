@@ -117,7 +117,7 @@ goog.scope(function() {
             translateY = 2 + (canvasToHolderHeight > 0 ? canvasToHolderHeight / 2 : 0);
 
         // init graphics context
-        ctx.fillStyle = 'grey';
+        ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.translate(translateX, translateY);
 
